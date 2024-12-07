@@ -53,17 +53,16 @@ function initChatterManager() {
       const toggleContainer = createToggleContainer();
       
       chrome.storage.sync.get(
-        ['hideChatter', 'displayBelow', 'showToggleButton'], 
+        ['hideChatter', 'displayBelow'], 
         function(result) {
           const shouldDisplayBelow = result.displayBelow ?? false;
           const shouldBeHidden = !shouldDisplayBelow && (result.hideChatter ?? false);
-          const showButton = result.showToggleButton ?? true;
           
           // Create button with correct initial position
           const toggleButton = createToggleButton();
           
           // Show/hide the button based on setting and position
-          toggleButton.style.display = (showButton && !shouldDisplayBelow) ? 'flex' : 'none';
+          toggleButton.style.display = !shouldDisplayBelow ? 'flex' : 'none';
           
           // Function to update toggle button position
           const updateTogglePosition = (isBelow) => {
@@ -71,7 +70,7 @@ function initChatterManager() {
             
             if (!isBelow) {
               document.body.appendChild(toggleButton);
-              toggleButton.style.display = showButton ? 'flex' : 'none';
+              toggleButton.style.display = 'flex';
             }
           };
           
@@ -144,12 +143,6 @@ function initChatterManager() {
                 chatterContainer.classList.remove('hidden');
                 formContainer.classList.remove('centered-form');
                 toggleButton.classList.add('active');
-              }
-            }
-            if (changes.showToggleButton) {
-              const toggleButton = document.querySelector('.chatter-toggle');
-              if (toggleButton) {
-                toggleButton.style.display = changes.showToggleButton.newValue ? 'flex' : 'none';
               }
             }
             if (changes.debugMode) {

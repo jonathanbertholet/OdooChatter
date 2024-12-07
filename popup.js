@@ -1,10 +1,9 @@
 // Load saved states when popup opens
 chrome.storage.sync.get(
-  ['hideChatter', 'displayBelow', 'showToggleButton', 'debugMode', 'stylishSupport'], 
+  ['hideChatter', 'displayBelow', 'debugMode', 'stylishSupport'], 
   function(result) {
     document.getElementById('hideChatter').checked = result.hideChatter ?? false;
     document.getElementById('displayBelow').checked = result.displayBelow ?? false;
-    document.getElementById('showToggleButton').checked = result.showToggleButton ?? true;
     document.getElementById('debugMode').checked = result.debugMode ?? false;
     document.getElementById('stylishSupportToggle').checked = result.stylishSupport ?? false;
 });
@@ -19,12 +18,6 @@ document.getElementById('hideChatter').addEventListener('change', function(e) {
 document.getElementById('displayBelow').addEventListener('change', function(e) {
   chrome.storage.sync.set({
     displayBelow: e.target.checked
-  });
-});
-
-document.getElementById('showToggleButton').addEventListener('change', function(e) {
-  chrome.storage.sync.set({
-    showToggleButton: e.target.checked
   });
 });
 
