@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Odoo Chatter Manager",
+  "version": "1.0",
+  "description": "Manage Odoo chatter visibility with a toggle button",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": ["*://*.odoo.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.odoo.com/*"],
+      "css": ["styles.css"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["support.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+} 

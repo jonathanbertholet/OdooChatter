@@ -1,0 +1,183 @@
+/* Hide chatter by default */
+.o-mail-ChatterContainer.hidden {
+  display: none !important;
+}
+
+/* Update toggle button styling */
+.chatter-toggle {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  background: #875A7B;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chatter-toggle:hover {
+  background: #6d4862;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Positioning for side mode */
+.chatter-toggle.side-mode {
+  right: 0;
+  top: 50%;
+  border-radius: 4px 0 0 4px;
+}
+
+/* Toggle icon styling */
+.chatter-toggle-icon {
+  width: 16px;
+  height: 16px;
+  fill: white;
+  stroke: white;
+  transition: transform 0.3s ease;
+  opacity: 0.9;
+}
+
+.chatter-toggle:hover .chatter-toggle-icon {
+  opacity: 1;
+}
+
+/* Icon rotations for different states */
+.chatter-toggle .chatter-toggle-icon {
+  transform: rotate(0);
+}
+
+.chatter-toggle.active .chatter-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Add new styles for centering the form */
+.o_content > div.centered-form {
+  justify-content: center !important;
+}
+
+/* Adjust form sheet width when centered */
+.centered-form .o_form_sheet_bg {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Add new styles for vertical layout */
+.o_content > div.vertical-layout {
+  flex-direction: column !important;
+  align-items: center !important;
+  display: flex !important;
+  min-height: 100vh !important;
+}
+
+.o_content {
+  overflow-y: auto !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+.vertical-layout .o_form_sheet_bg {
+  max-width: 1140px;
+  width: 100%;
+  margin: 0 auto;
+  overflow: visible !important;
+  margin-bottom: 16px;
+}
+
+.vertical-layout .o-mail-ChatterContainer {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 1140px;
+  width: 100%;
+  overflow: visible !important;
+}
+
+/* Adjust hidden state for vertical layout */
+.vertical-layout .o-mail-ChatterContainer.hidden {
+  display: none !important;
+  margin: 0 !important;
+}
+
+/* Ensure form view remains visible and scrollable */
+.vertical-layout .o_form_view {
+  overflow: visible !important;
+  width: 100% !important;
+  display: block !important;
+  position: relative !important;
+}
+
+/* Add container styling */
+.chatter-toggle-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,1) 100%);
+  padding: 16px 0;
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+
+/* Add these styles for the debug mode toggle */
+#debugMode:disabled + .slider {
+  animation: pulse 1.5s infinite;
+  opacity: 0.7;
+  cursor: wait;
+}
+
+
+/* Animated toggle button */
+.chatter-toggle {
+  background: linear-gradient(135deg, #875A7B, #6d4862);
+  border-radius: 8px;
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatter-toggle:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #6d4862, #875A7B);
+}
+
+/* Loading state animation */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Form field animations */
+.o_form_view .o_form_field {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.o_form_view .o_form_field:focus-within {
+}
+
+/* Status indicators */
+.o_form_view .o_field_widget.o_field_many2one {
+  position: relative;
+  overflow: visible;
+}
+
+.o_form_view .o_field_widget.o_field_many2one::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.o_form_view .o_field_widget.o_field_many2one.o_field_valid::after {
+  opacity: 1;
+}

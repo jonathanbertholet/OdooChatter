@@ -1,0 +1,531 @@
+/* Custom styling for Odoo support page */
+/* Override default Odoo support page styles */
+body {
+    background-color: #f5f5f5;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-feature-settings: "liga" 1, "calt" 1; /* Enable ligatures for supported browsers */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6 !important;
+    color: #374151 !important;
+    padding-top: 0 !important; /* Remove any default padding */
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: #714B67 !important;
+}
+
+.container.bg-white {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 2rem !important;
+    background-color: white !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.3 !important;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+    color: #1F2937 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+h2 {
+    font-size: 1.875rem !important;
+    color: #374151 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+    color: #4B5563 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Paragraph and text styles */
+p, li, td, th {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+    color: #4B5563 !important;
+}
+
+/* Link styles */
+a {
+    color: #875A7B !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    border-bottom: 1px solid transparent;
+}
+
+a:hover {
+    color: #6d4862 !important;
+    border-bottom: 1px solid currentColor;
+}
+
+/* Code and pre styles */
+code, pre {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace !important;
+    font-size: 0.9375rem !important;
+    background: #F9FAFB !important;
+    border-radius: 4px !important;
+    padding: 0.2em 0.4em !important;
+}
+
+pre {
+    padding: 1rem !important;
+    overflow-x: auto !important;
+    border: 1px solid #E5E7EB !important;
+}
+
+/* Form elements */
+input, textarea, select {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-size: 0.9375rem !important;
+}
+
+/* Table styles */
+.table {
+    font-size: 0.9375rem !important;
+}
+
+.table th {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+    color: #1F2937 !important;
+}
+
+/* Navigation and buttons */
+.navbar-brand, .btn {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* Alert and notification text */
+.alert {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    line-height: 1.6 !important;
+}
+
+/* Table of contents specific styles */
+.toc-container {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+.toc-title {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+}
+
+.toc-link {
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Small text and metadata */
+.small, small {
+    font-size: 0.875rem !important;
+    color: #6B7280 !important;
+}
+
+/* List styling */
+ul, ol {
+    padding-left: 1.25rem !important;
+}
+
+li {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Blockquote styling */
+blockquote {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-size: 1.125rem !important;
+    font-style: italic !important;
+    color: #4B5563 !important;
+    border-left: 4px solid #875A7B !important;
+    padding-left: 1rem !important;
+    margin-left: 0 !important;
+}
+
+/* Article content spacing */
+article p {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Badge and label text */
+.badge, .label {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+}
+
+.btn-primary {
+    background-color: #714B67 !important;
+    border-color: #714B67 !important;
+}
+
+.btn-primary:hover {
+    background-color: #5D3F54 !important;
+    border-color: #5D3F54 !important;
+}
+
+/* Additional styles */
+.table {
+    background: white !important;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.form-control {
+    border-radius: 4px !important;
+    border: 1px solid #ddd !important;
+}
+
+.alert {
+    border-radius: 4px !important;
+}
+
+/* Support nav styling */
+#support-nav {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    padding: 0.75rem 1rem !important;
+    background: rgba(113, 75, 103, 0.97) !important; /* Using the Odoo purple with slight transparency */
+    backdrop-filter: blur(8px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Enhance navbar elements */
+#support-nav .navbar-brand {
+    color: white !important;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+#support-nav .o_menu_title {
+    font-size: 1.125rem !important;
+    letter-spacing: -0.01em !important;
+}
+
+#support-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.2s ease !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 4px !important;
+}
+
+#support-nav .nav-link:hover,
+#support-nav .nav-link.active {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+#support-nav .fa {
+    font-size: 1.25rem !important;
+    opacity: 0.9 !important;
+    transition: opacity 0.2s ease !important;
+}
+
+#support-nav .navbar-brand:hover .fa {
+    opacity: 1 !important;
+}
+
+/* Container fluid padding */
+#support-nav .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    padding: 0 1rem !important;
+}
+
+/* Ensure navbar stays on top */
+body {
+    padding-top: 0 !important; /* Remove any default padding */
+}
+
+/* Add subtle scroll shadow */
+#support-nav.scrolled {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Support welcome section */
+#support-welcome {
+    margin-bottom: 2rem !important;
+}
+
+#support-welcome h1 {
+    font-size: 2.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Update the navbar sticky behavior */
+.o_database_list {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    background: white !important;
+    padding: 1rem 0 !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    margin-bottom: 2rem !important;
+    backdrop-filter: blur(8px) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Fix TOC link active state */
+.toc-link {
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+    position: relative !important;
+    display: block !important;
+    padding: 6px 12px !important;
+    color: #4B5563 !important;
+    text-decoration: none !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+.toc-link:hover {
+    background: #f7f0f5 !important;
+    color: #875A7B !important;
+}
+
+.toc-link.active {
+    background: #875A7B !important;
+    color: #ffffff !important; /* Ensure text is white when active */
+    font-weight: 500 !important;
+    box-shadow: 0 2px 4px rgba(135, 90, 123, 0.2) !important;
+}
+
+/* Enhance TOC container */
+.toc-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid #E5E7EB !important;
+}
+
+/* Add smooth transition for active state */
+.toc-link {
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* Update navbar styling to accommodate impersonation controls */
+#support-nav .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    padding: 0 1rem !important;
+}
+
+/* Create a flex container for the left side */
+#support-nav .nav-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+/* Style the impersonation section in navbar */
+#support-nav .impersonation-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    margin-left: auto !important;
+    margin-right: 1rem !important;
+}
+
+#support-nav .impersonation-controls form {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    margin: 0 !important;
+}
+
+#support-nav .impersonation-controls select {
+    height: 32px !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    font-size: 0.875rem !important;
+    min-width: 200px !important;
+    transition: all 0.2s ease !important;
+}
+
+#support-nav .impersonation-controls select:focus {
+    outline: none !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#support-nav .impersonation-controls select option {
+    background: #714B67 !important;
+    color: white !important;
+}
+
+#support-nav .impersonation-controls button {
+    height: 32px !important;
+    padding: 0 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    font-size: 0.875rem !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+#support-nav .impersonation-controls button:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Style the select dropdown */
+#support-nav .impersonation-controls select::-ms-expand {
+    display: none !important;
+}
+
+#support-nav .impersonation-controls select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.7em top 50% !important;
+    background-size: 1em auto !important;
+    padding-right: 2.5em !important;
+}
+
+/* Adjust spacing for nav items */
+#support-nav .nav.navbar-nav {
+    margin-left: 0 !important;
+} 
+
+/* Table of Contents styling */
+.toc-container {
+    position: fixed;
+    right: 24px;
+    top: 100px;
+    width: 240px;
+    max-height: calc(100vh - 120px);
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-y: auto;
+    z-index: 100;
+    transition: all 0.3s ease;
+  }
+  
+  .toc-container:hover {
+  }
+  
+  .toc-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #875A7B;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .toc-item {
+    margin: 8px 0;
+  }
+  
+  .toc-link {
+    display: block;
+    padding: 6px 12px;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .toc-link:hover {
+    background: #f7f0f5;
+    color: #875A7B;
+  }
+  
+  .toc-link.active {
+    background: #875A7B;
+    color: white;
+    font-weight: 500;
+  }
+  
+  /* Adjust main content to make room for TOC */
+  .o_content > div.vertical-layout {
+    padding-right: 280px !important;
+  }
+  
+  /* Make TOC responsive */
+  @media (max-width: 1200px) {
+    .toc-container {
+      right: 16px;
+      width: 200px;
+    }
+    
+    .o_content > div.vertical-layout {
+      padding-right: 232px !important;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .toc-container {
+      display: none;
+    }
+    
+    .o_content > div.vertical-layout {
+      padding-right: 16px !important;
+    }
+  }
+    
+
+
+/* Scrollbar styling */
+.o_content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .o_content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .o_content::-webkit-scrollbar-thumb {
+    background: #875A7B;
+    border-radius: 4px;
+  }
+  
+  .o_content::-webkit-scrollbar-thumb:hover {
+    background: #6d4862;
+  }
+  
+  
