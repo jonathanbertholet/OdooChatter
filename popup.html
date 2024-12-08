@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="icons/icon16.png">
   <style>
     body {
@@ -94,6 +95,49 @@
     .link-row button:hover {
       background: #6d4862;
     }
+    
+    .shortcuts {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    
+    .shortcuts h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+    
+    .shortcut-key {
+      background: #f5f5f5;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: -apple-system, BlinkMacSystemFont, monospace;
+      color: #875A7B;
+      border: 1px solid #ddd;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    
+    .shortcut-key span {
+      display: inline-block;
+      padding: 0 2px;
+    }
+    
+    /* Add styles for the keyboard symbols */
+    .kbd-mac {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -109,8 +153,8 @@
   </div>
   <div class="setting-row">
     <div>
-      <span>Display chatter below</span>
-      <div class="setting-description">Moves chatter below the form</div>
+      <span>Always display chatter below</span>
+      <div class="setting-description">Moves chatter below the form view</div>
     </div>
     <label class="switch">
       <input type="checkbox" id="displayBelow">
@@ -136,6 +180,19 @@
       <input type="checkbox" id="stylishSupportToggle">
       <span class="slider"></span>
     </label>
+  </div>
+  <div class="shortcuts">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="shortcut-row">
+      <span>Toggle Chatter</span>
+      <span class="shortcut-key">
+        <span class="kbd-mac">&#8984;</span>
+        <span class="kbd-mac">&#8679;</span>
+        <span>X</span>
+        <span style="margin: 0 4px;">/</span>
+        <span>Alt+C</span>
+      </span>
+    </div>
   </div>
   <div class="quick-links">
     <h3>Quick Links</h3>

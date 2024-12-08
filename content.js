@@ -25,8 +25,8 @@ function createToggleButton() {
   button.className = 'chatter-toggle side-mode';
   
   button.innerHTML = `
-    <svg class="chatter-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="15 18 9 12 15 6"></polyline>
+    <svg class="chatter-toggle-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+      <path d="M12 14L7 10L12 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   `;
   
@@ -56,7 +56,8 @@ function initChatterManager() {
         ['hideChatter', 'displayBelow'], 
         function(result) {
           const shouldDisplayBelow = result.displayBelow ?? false;
-          const shouldBeHidden = !shouldDisplayBelow && (result.hideChatter ?? false);
+          // This preference only controls initial state on page load
+          const initiallyHidden = result.hideChatter ?? false;
           
           // Create button with correct initial position
           const toggleButton = createToggleButton();
@@ -77,16 +78,15 @@ function initChatterManager() {
           // Initial position setup
           updateTogglePosition(shouldDisplayBelow);
           
-          // Apply layout
           if (shouldDisplayBelow) {
+            // In below mode, always show chatter
             formContainer.classList.add('vertical-layout');
             chatterContainer.classList.remove('hidden');
             formContainer.classList.remove('centered-form');
-          }
-          
-          // Apply visibility based on hide preference (only when not below)
-          if (!shouldDisplayBelow) {
-            if (shouldBeHidden) {
+          } else {
+            // In side mode, use initial preference for first load only
+            formContainer.classList.remove('vertical-layout');
+            if (initiallyHidden) {
               chatterContainer.classList.add('hidden');
               formContainer.classList.add('centered-form');
               toggleButton.classList.remove('active');
@@ -95,23 +95,16 @@ function initChatterManager() {
               formContainer.classList.remove('centered-form');
               toggleButton.classList.add('active');
             }
-          }
-          
-          // Add click event listener for visibility toggle
-          toggleButton.addEventListener('click', () => {
-            // Only allow toggling if not in bottom mode
-            if (!shouldDisplayBelow) {
+
+            // Add click event listener that only affects UI, doesn't update storage
+            toggleButton.addEventListener('click', () => {
               const isHidden = chatterContainer.classList.toggle('hidden');
               formContainer.classList.toggle('centered-form');
               toggleButton.classList.toggle('active');
-              
-              // Save the new state
-              chrome.storage.sync.set({
-                hideChatter: isHidden
-              });
-            }
-          });
-
+              // Removed the storage.sync.set call here
+            });
+          }
+          
           // Modify the storage change listener
           chrome.storage.onChanged.addListener((changes) => {
             if (changes.displayBelow) {
@@ -513,3 +506,48 @@ function moveImpersonationToNavbar() {
         }
     }
 } 
+
+// Add this near the top of the file with other initialization code
+function initKeyboardShortcut() {
+  document.addEventListener('keydown', function(e) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    
+    // Command+Shift+X for Mac, Alt+C for others
+    if ((isMac && e.metaKey && e.shiftKey && e.key.toLowerCase() === 'x') || 
+        (!isMac && e.altKey && e.key.toLowerCase() === 'c')) {
+      e.preventDefault();
+      const toggleButton = document.querySelector('.chatter-toggle');
+      if (toggleButton) {
+        toggleButton.click();
+        
+        // Show a subtle feedback tooltip
+        const tooltip = document.createElement('div');
+        tooltip.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: rgba(135, 90, 123, 0.9);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          z-index: 1001;
+          font-size: 13px;
+          pointer-events: none;
+        `;
+        // Adjust tooltip text based on OS
+        tooltip.textContent = `Chatter toggled (${isMac ? '⌘⇧X' : 'Alt+C'})`;
+        document.body.appendChild(tooltip);
+        
+        // Remove tooltip after animation
+        setTimeout(() => {
+          tooltip.style.transition = 'opacity 0.3s ease';
+          tooltip.style.opacity = '0';
+          setTimeout(() => tooltip.remove(), 300);
+        }, 1000);
+      }
+    }
+  });
+}
+
+// Add this to your initialization code
+initKeyboardShortcut(); 

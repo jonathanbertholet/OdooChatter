@@ -29,5 +29,14 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-chatter": {
+      "suggested_key": {
+        "default": "Alt+C",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Toggle Chatter Panel"
+    }
   }
 } 
