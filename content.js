@@ -1,3 +1,38 @@
+// Function to track recent views
+function trackRecentView() {
+  // Only track if we're on a form view
+  const formView = document.querySelector('.o_form_view');
+  if (!formView) return;
+
+  // Get the view title
+  const title = document.title.split(' - ').slice(0, -1).join(' - ') || document.title;
+  const url = window.location.href;
+
+  // Get existing recent views
+  chrome.storage.local.get(['recentViews'], function(result) {
+    let recentViews = result.recentViews || [];
+    
+    // Create new view entry
+    const newView = {
+      title: title,
+      url: url,
+      timestamp: Date.now()
+    };
+    
+    // Remove duplicate if exists
+    recentViews = recentViews.filter(view => view.url !== url);
+    
+    // Add new view at the beginning
+    recentViews.unshift(newView);
+    
+    // Keep only last 50 views instead of 20
+    recentViews = recentViews.slice(0, 50);
+    
+    // Save updated list
+    chrome.storage.local.set({ recentViews: recentViews });
+  });
+}
+
 // Debounce function to prevent rapid re-initialization
 function debounce(func, wait) {
   let timeout;
@@ -172,6 +207,7 @@ const urlObserver = new MutationObserver(() => {
     debouncedInit();
     initDebugMode();
     handleSupportPageStyling();
+    trackRecentView();
   }
 });
 

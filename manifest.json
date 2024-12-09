@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Odoo Chatter Manager",
-  "version": "1.0",
-  "description": "Manage Odoo chatter visibility with a toggle button",
+  "name": "Odoo Chatter Utilities",
+  "version": "1.1",
+  "description": "Manage Odoo Chatter and other practical utilities",
   "permissions": [
     "activeTab",
     "storage",
@@ -21,7 +21,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["support.css"],
+      "resources": ["support.css", "popup.css"],
       "matches": ["<all_urls>"]
     }
   ],

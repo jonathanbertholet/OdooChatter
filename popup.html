@@ -3,203 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="icons/icon16.png">
-  <style>
-    body {
-      width: 200px;
-      padding: 10px;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .setting-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 10px 0;
-    }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 40px;
-      height: 24px;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .3s;
-      border-radius: 24px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #875A7B;
-    }
-    input:checked + .slider:before {
-      transform: translateX(16px);
-    }
-    .setting-row + .setting-row {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-    .setting-description {
-      font-size: 0.8em;
-      color: #666;
-      margin-top: 4px;
-    }
-    .quick-links {
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-    
-    .quick-links h3 {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    
-    .link-row {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .link-row button {
-      padding: 6px 12px;
-      background: #875A7B;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: background 0.3s;
-    }
-    
-    .link-row button:hover {
-      background: #6d4862;
-    }
-    
-    .shortcuts {
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-    
-    .shortcuts h3 {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    
-    .shortcut-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 8px 0;
-      font-size: 13px;
-    }
-    
-    .shortcut-key {
-      background: #f5f5f5;
-      padding: 3px 6px;
-      border-radius: 4px;
-      font-family: -apple-system, BlinkMacSystemFont, monospace;
-      color: #875A7B;
-      border: 1px solid #ddd;
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-    }
-    
-    .shortcut-key span {
-      display: inline-block;
-      padding: 0 2px;
-    }
-    
-    /* Add styles for the keyboard symbols */
-    .kbd-mac {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-  </style>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="setting-row">
-    <div>
-      <span>Hide chatter</span>
-      <div class="setting-description">Hide chatter by default</div>
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="hideChatter">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div class="setting-row">
-    <div>
-      <span>Always display chatter below</span>
-      <div class="setting-description">Moves chatter below the form view</div>
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="displayBelow">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div class="setting-row">
-    <div>
-      <span>Always debug mode</span>
-      <div class="setting-description">Automatically adds ?debug=1 to URLs</div>
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="debugMode">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div class="setting-row">
-    <div>
-      <span>Stylish Support</span>
-      <div class="setting-description">Only works for Odoo Employees</div>
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="stylishSupportToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div class="shortcuts">
-    <h3>Keyboard Shortcuts</h3>
-    <div class="shortcut-row">
-      <span>Toggle Chatter</span>
-      <span class="shortcut-key">
-        <span class="kbd-mac">&#8984;</span>
-        <span class="kbd-mac">&#8679;</span>
-        <span>X</span>
-        <span style="margin: 0 4px;">/</span>
-        <span>Alt+C</span>
-      </span>
-    </div>
-  </div>
-  <div class="quick-links">
-    <h3>Quick Links</h3>
+  <!-- Quick Links section first -->
+  <section class="quick-links">
     <div class="link-row">
-      <button id="settingsLink">Settings</button>
+      <button id="settingsLink" class="primary-button">
+        <svg viewBox="0 0 24 24" class="button-icon">
+          <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
+        </svg>
+        Odoo Settings
+      </button>
     </div>
-  </div>
+  </section>
+
+  <!-- Recent Views section -->
+  <section class="recent-views">
+    <h3>Recent Views</h3>
+    <div id="recentViewsList" class="recent-views-list">
+      <!-- Recent views populated by JavaScript -->
+    </div>
+  </section>
+
+  <!-- Settings section -->
+  <section class="settings-section">
+    <h3>Settings</h3>
+    
+    <div class="settings-group">
+      <div class="setting-row">
+        <div class="setting-info">
+          <span class="setting-title">Hide chatter</span>
+          <div class="setting-description">Hide chatter by default</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hideChatter">
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="setting-row">
+        <div class="setting-info">
+          <span class="setting-title">Display below</span>
+          <div class="setting-description">Moves chatter below the form view</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="displayBelow">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <span class="setting-title">Debug mode</span>
+          <div class="setting-description">Automatically adds ?debug=1 to URLs</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="debugMode">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <span class="setting-title">Stylish Support</span>
+          <div class="setting-description">Only works for Odoo Employees</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="stylishSupportToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shortcuts section last -->
+  <section class="shortcuts">
+    <div class="shortcut-row">
+      <span class="shortcut-label">Toggle Chatter</span>
+      <div class="shortcut-keys">
+        <span class="shortcut-key">
+          <span class="kbd-mac">⌘</span>
+          <span class="kbd-mac">⇧</span>
+          <span>X</span>
+        </span>
+        <span class="shortcut-separator">or</span>
+        <span class="shortcut-key">
+          <span>Alt+C</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
   <script src="popup.js"></script>
 </body>
 </html> 

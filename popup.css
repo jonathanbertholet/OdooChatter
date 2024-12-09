@@ -1,0 +1,207 @@
+/* Base Styles */
+body {
+  width: 330px;
+  padding: 12px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #333;
+  margin: 0;
+}
+
+/* Section Styles */
+section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 8px 0;
+}
+
+/* Settings Styles */
+.settings-group {
+  margin-bottom: 8px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.setting-info {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.setting-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.setting-description {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Recent Views Styles */
+.recent-views-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.recent-view-item {
+  padding: 6px 8px;
+  margin: 2px 0;
+  background: #f8f8f8;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Switch Toggle Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #875A7B;
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+/* Shortcuts Styles */
+.shortcuts {
+  margin-bottom: 16px;
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shortcut-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcut-key {
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, monospace;
+  color: #875A7B;
+  border: 1px solid #e0e0e0;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shortcut-separator {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Quick Links Styles */
+.primary-button {
+  width: 100%;
+  padding: 8px 16px;
+  background: #875A7B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.primary-button:hover {
+  background: #6d4862;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+} 
