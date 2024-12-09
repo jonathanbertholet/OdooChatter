@@ -1,4 +1,4 @@
-# Odoo Page Enhancer
+# Odoo Chatter Manager
 
 A Chrome extension that enhances the Odoo user experience with customizable chatter positioning, debug mode management, and improved support page styling.
 

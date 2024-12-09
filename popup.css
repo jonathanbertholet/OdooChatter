@@ -204,4 +204,31 @@ input:checked + .slider:before {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #ccc;
+}
+
+.github-link {
+  padding: 8px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.github-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.github-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.github-button .button-icon {
+  width: 18px;
+  height: 18px;
 } 

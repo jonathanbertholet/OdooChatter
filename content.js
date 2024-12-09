@@ -1,3 +1,6 @@
+// Add at the top of the file
+let lastUrl = window.location.href;  // Track current URL
+
 // Function to track recent views
 function trackRecentView() {
   // Only track if we're on a form view
@@ -198,52 +201,88 @@ const debouncedInit = debounce(() => {
   }
 }, 250);
 
-// Create a URL change observer
-let lastUrl = location.href;
-const urlObserver = new MutationObserver(() => {
-  const url = location.href;
-  if (url !== lastUrl) {
-    lastUrl = url;
-    debouncedInit();
-    initDebugMode();
-    handleSupportPageStyling();
-    trackRecentView();
+// Add throttle utility if not already present
+function throttle(func, limit) {
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// Combined observer (keep your existing observer code but add error handling)
+const combinedObserver = new MutationObserver(throttle((mutations) => {
+  try {
+    // Track if we need updates
+    let needsUrlCheck = false;
+    let needsChatterCheck = false;
+    
+    for (const mutation of mutations) {
+      // Quick checks to determine type of update needed
+      if (mutation.target.nodeName === 'TITLE' || 
+          (mutation.type === 'attributes' && ['href', 'data-action'].includes(mutation.attributeName))) {
+        needsUrlCheck = true;
+      }
+      
+      if (!needsChatterCheck && mutation.type === 'childList') {
+        // Use more efficient checks for chatter-related changes
+        needsChatterCheck = Array.from(mutation.addedNodes).some(node => 
+          node.nodeType === Node.ELEMENT_NODE && (
+            node.matches?.('.o-mail-ChatterContainer') ||
+            node.querySelector?.('.o-mail-ChatterContainer')
+          )
+        );
+      }
+      
+      // Break early if we need both updates
+      if (needsUrlCheck && needsChatterCheck) break;
+    }
+
+    // Batch updates together
+    if (needsUrlCheck) {
+      const url = location.href;
+      if (url !== lastUrl) {
+        lastUrl = url;
+        debouncedInit();
+        initDebugMode();
+        handleSupportPageStyling();
+        trackRecentView();
+      }
+    }
+    if (needsChatterCheck) {
+      debouncedInit();
+    }
+  } catch (error) {
+    console.error('Error in mutation observer:', error);
   }
-});
+}, 150));
 
-// Start URL observer
-urlObserver.observe(document, { subtree: true, childList: true });
-
-// Observer to handle dynamic content loading
-const contentObserver = new MutationObserver((mutations) => {
-  // Only proceed if we see relevant changes
-  const hasRelevantChanges = mutations.some(mutation => {
-    return Array.from(mutation.addedNodes).some(node => 
-      node.nodeType === 1 && // Only element nodes
-      (node.classList?.contains('o-mail-ChatterContainer') || 
-       node.querySelector?.('.o-mail-ChatterContainer'))
-    );
-  });
-
-  if (hasRelevantChanges) {
-    debouncedInit();
-  }
-});
-
-// Start content observer with more specific options
-contentObserver.observe(document.body, {
-  childList: true,
+// Single observer configuration
+combinedObserver.observe(document, {
   subtree: true,
-  attributes: false,
+  childList: true,
+  attributes: true,
+  attributeFilter: ['href', 'data-action'],
   characterData: false
 });
+
+// Update cleanup function
+function disconnectObservers() {
+  combinedObserver.disconnect();
+}
+
+// Add cleanup on page unload
+window.addEventListener('unload', disconnectObservers);
 
 // Initial check
 if (isRelevantPage()) {
   initChatterManager();
 }
 
-// Add these functions at the top of the file
+// Debug Mode Functions
 function getDebugMode() {
   const url = new URL(window.location.href);
   return url.searchParams.get('debug') || '';
