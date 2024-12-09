@@ -1,5 +1,10 @@
 # System files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 
@@ -17,23 +22,19 @@ package-lock.json
 dist/
 build/
 *.zip
+*.crx
+*.xpi
+*.pem
 
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Browser Extension specific
-*.pem
-*.crx
-*.xpi
+*.log
+*.tmp
+*~
 
 # Environment variables
 .env
 .env.local
-.env.*.local
-
-# Temporary files
-*.log
-*.tmp
-*~ 
+.env.*
