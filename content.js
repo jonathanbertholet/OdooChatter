@@ -305,8 +305,18 @@ function updateDebugMode(mode) {
   }
 }
 
-// Add this to handle debug mode changes
+// Add this helper function
+function isSlideUrl() {
+  return window.location.pathname.includes('/slides/');
+}
+
+// Update the handleDebugModeChange function
 function handleDebugModeChange(enabled) {
+  // Don't modify debug mode on slides pages
+  if (isSlideUrl()) {
+    return;
+  }
+
   const currentMode = getDebugMode();
   
   if (enabled) {
@@ -326,9 +336,13 @@ function handleDebugModeChange(enabled) {
   }
 }
 
-// Add this near the bottom of the file
-// Initialize debug mode on page load and URL changes
+// Update the initDebugMode function
 function initDebugMode() {
+  // Skip debug mode initialization for slides pages
+  if (isSlideUrl()) {
+    return;
+  }
+
   chrome.storage.sync.get(['debugMode'], function(result) {
     if (result.debugMode) {
       handleDebugModeChange(true);
