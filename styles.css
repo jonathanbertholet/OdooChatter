@@ -199,3 +199,14 @@
 .o_form_view .o_field_widget.o_field_many2one.o_field_valid::after {
   opacity: 1;
 }
+
+/* Fix for contacts app form view spacing */
+.o_form_view.o_xxl_form_view .o_form_sheet_bg {
+  flex: 0 1 auto !important; /* Override the flex: 2 1 990px */
+}
+
+/* Additional fix for vertical layout in contacts */
+.vertical-layout .o_form_view.o_xxl_form_view .o_form_sheet_bg {
+  min-height: auto !important;
+  flex: 0 1 auto !important;
+}

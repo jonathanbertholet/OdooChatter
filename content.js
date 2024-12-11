@@ -1,9 +1,9 @@
-// Add at the top of the file
-let lastUrl = window.location.href;  // Track current URL
+// URL management
+let lastUrl = window.location.href;  // save current URL
 
-// Function to track recent views
+// Function to save recent views
 function trackRecentView() {
-  // Only track if we're on a form view
+  // Only save if we're on a form view
   const formView = document.querySelector('.o_form_view');
   if (!formView) return;
 
@@ -201,7 +201,7 @@ const debouncedInit = debounce(() => {
   }
 }, 250);
 
-// Add throttle utility if not already present
+// Add throttle utility 
 function throttle(func, limit) {
   let inThrottle;
   return function(...args) {
@@ -213,7 +213,7 @@ function throttle(func, limit) {
   };
 }
 
-// Combined observer (keep your existing observer code but add error handling)
+// Combined observer for url and chatter changes
 const combinedObserver = new MutationObserver(throttle((mutations) => {
   try {
     // Track if we need updates
@@ -274,7 +274,7 @@ function disconnectObservers() {
   combinedObserver.disconnect();
 }
 
-// Add cleanup on page unload
+// cleanup on page unload
 window.addEventListener('unload', disconnectObservers);
 
 // Initial check
@@ -353,12 +353,12 @@ function initDebugMode() {
 // Call initDebugMode on initial load
 initDebugMode(); 
 
-// Add this function near the top of the file
+// support page detection
 function isSupportPage() {
   return window.location.pathname.includes('/_odoo/support');
 }
 
-// Add this function to handle support page styling
+// support page styling
 function handleSupportPageStyling() {
   if (!isSupportPage()) return;
   
@@ -495,7 +495,7 @@ function addScrollSpy(headings) {
   headings.forEach(heading => observer.observe(heading));
 }
 
-// Add this to your existing support page handling
+// Support page navbar scroll
 function handleNavbarScroll() {
     if (!isSupportPage()) return;
     
@@ -511,92 +511,8 @@ function handleNavbarScroll() {
     });
 } 
 
-// Add this function to handle the impersonation section move
-function moveImpersonationToNavbar() {
-    if (!isSupportPage()) return;
-    
-    const navbar = document.getElementById('support-nav');
-    if (!navbar) return;
-    
-    // Find the impersonation section in the page
-    const impersonationSection = document.querySelector('.o_database_list');
-    if (!impersonationSection) return;
-    
-    // Create container for left side of navbar
-    const navLeft = document.createElement('div');
-    navLeft.className = 'nav-left';
-    
-    // Move existing brand and title to left container
-    const brand = navbar.querySelector('.navbar-brand');
-    const title = navbar.querySelector('.o_menu_title');
-    if (brand && title) {
-        navLeft.appendChild(brand.cloneNode(true));
-        navLeft.appendChild(title.cloneNode(true));
-    }
-    
-    // Create container for impersonation controls
-    const impersonationControls = document.createElement('div');
-    impersonationControls.className = 'impersonation-controls';
-    
-    // Find all the form elements we need to move
-    const form = impersonationSection.querySelector('form');
-    if (form) {
-        // Clone the entire form
-        const formClone = form.cloneNode(true);
-        
-        // Get references to original elements
-        const originalSelect = form.querySelector('select');
-        const originalButton = form.querySelector('button');
-        
-        // Get references to cloned elements
-        const clonedSelect = formClone.querySelector('select');
-        const clonedButton = formClone.querySelector('button');
-        
-        // Copy select event listeners and value
-        if (originalSelect && clonedSelect) {
-            clonedSelect.value = originalSelect.value;
-            // Copy all event listeners
-            const selectClone = originalSelect.cloneNode(true);
-            originalSelect.getAttributeNames().forEach(attr => {
-                if (attr.startsWith('on')) {
-                    clonedSelect[attr] = originalSelect[attr];
-                }
-            });
-        }
-        
-        // Copy button event listeners
-        if (originalButton && clonedButton) {
-            // Copy onclick and other event handlers
-            originalButton.getAttributeNames().forEach(attr => {
-                if (attr.startsWith('on')) {
-                    clonedButton[attr] = originalButton[attr];
-                }
-            });
-        }
-        
-        // Add the cloned form to impersonation controls
-        impersonationControls.appendChild(formClone);
-        
-        // Hide original form
-        form.style.display = 'none';
-    }
-    
-    // Clear and rebuild navbar container
-    const container = navbar.querySelector('.container-fluid');
-    if (container) {
-        container.innerHTML = '';
-        container.appendChild(navLeft);
-        container.appendChild(impersonationControls);
-        
-        // Move the logout button to the right
-        const navbarNav = navbar.querySelector('.nav.navbar-nav');
-        if (navbarNav) {
-            container.appendChild(navbarNav.cloneNode(true));
-        }
-    }
-} 
 
-// Add this near the top of the file with other initialization code
+// Keyboard shortcuts manager
 function initKeyboardShortcut() {
   document.addEventListener('keydown', function(e) {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -638,5 +554,5 @@ function initKeyboardShortcut() {
   });
 }
 
-// Add this to your initialization code
+// Keyboard shortcuts 
 initKeyboardShortcut(); 
