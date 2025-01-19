@@ -121,6 +121,15 @@ input:checked + .slider:before {
   transform: translateX(16px);
 }
 
+.switch input:disabled + .slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch input:disabled ~ .slider:before {
+  background-color: #ccc;
+}
+
 /* Shortcuts Styles */
 .shortcuts {
   margin-bottom: 16px;

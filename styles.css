@@ -147,7 +147,6 @@
   cursor: wait;
 }
 
-
 /* Animated toggle button */
 .chatter-toggle {
   background: linear-gradient(135deg, #875A7B, #6d4862);
@@ -166,38 +165,6 @@
   0% { opacity: 1; }
   50% { opacity: 0.6; }
   100% { opacity: 1; }
-}
-
-/* Form field animations */
-.o_form_view .o_form_field {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.o_form_view .o_form_field:focus-within {
-}
-
-/* Status indicators */
-.o_form_view .o_field_widget.o_field_many2one {
-  position: relative;
-  overflow: visible;
-}
-
-.o_form_view .o_field_widget.o_field_many2one::after {
-  content: '';
-  position: absolute;
-  right: -8px;
-  top: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10B981;
-  transform: translateY(-50%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.o_form_view .o_field_widget.o_field_many2one.o_field_valid::after {
-  opacity: 1;
 }
 
 /* Fix for contacts app form view spacing */

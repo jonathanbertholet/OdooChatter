@@ -1,5 +1,5 @@
 // URL management
-let lastUrl = window.location.href;  // save current URL
+let lastUrl = window.location.href;  // Save current URL
 
 // Function to save recent views
 function trackRecentView() {
@@ -28,7 +28,7 @@ function trackRecentView() {
     // Add new view at the beginning
     recentViews.unshift(newView);
     
-    // Keep only last 50 views instead of 20
+    // Keep only last 50 views
     recentViews = recentViews.slice(0, 50);
     
     // Save updated list
@@ -40,12 +40,20 @@ function trackRecentView() {
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
     clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
+// Throttle function to limit the rate of function execution
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
   };
 }
 
@@ -72,191 +80,207 @@ function createToggleButton() {
   return button;
 }
 
-// Main function to initialize the chatter manager
+/**
+ * Checks if the current page has the chatter container.
+ * @returns {boolean} True if chatter is present, else false.
+ */
+function isRelevantPage() {
+  return !!document.querySelector('.o-mail-ChatterContainer, .o_mail_chattercontainer');
+}
+
+/**
+ * Initializes the chatter manager by creating or removing the toggle button based on the presence of chatter.
+ */
 function initChatterManager() {
-  // Check if we already have an initialized toggle
-  if (document.querySelector('.chatter-toggle')) {
+  if (isRelevantPage()) {
+    // Chatter is present; ensure the toggle button is inserted
+    const chatterContainer = document.querySelector('.o-mail-ChatterContainer, .o_mail_chattercontainer');
+    const formContainer = chatterContainer?.closest('.o_content > div');
+
+    if (formContainer && chatterContainer) {
+      insertToggleButton(formContainer, chatterContainer);
+    }
+  } else {
+    // Chatter is absent; remove the toggle button if it exists
+    removeToggleButton();
+  }
+}
+
+/**
+ * Inserts the toggle button into the DOM.
+ */
+function insertToggleButton(formContainer, chatterContainer) {
+  const existingToggleButton = document.querySelector('.chatter-toggle');
+  if (existingToggleButton) {
+    console.log('Toggle button already exists. Skipping insertion.');
     return;
   }
 
-  // Find the chatter container
-  const chatterContainer = document.querySelector('.o-mail-ChatterContainer');
-  
-  if (chatterContainer) {
-    // Find the parent container that needs centering
-    const formContainer = chatterContainer.closest('.o_content > div');
-    
-    if (formContainer) {
-      // Create toggle container but don't append it yet
-      const toggleContainer = createToggleContainer();
-      
-      chrome.storage.sync.get(
-        ['hideChatter', 'displayBelow'], 
-        function(result) {
-          const shouldDisplayBelow = result.displayBelow ?? false;
-          // This preference only controls initial state on page load
-          const initiallyHidden = result.hideChatter ?? false;
-          
-          // Create button with correct initial position
-          const toggleButton = createToggleButton();
-          
-          // Show/hide the button based on setting and position
-          toggleButton.style.display = !shouldDisplayBelow ? 'flex' : 'none';
-          
-          // Function to update toggle button position
-          const updateTogglePosition = (isBelow) => {
-            toggleButton.remove();
-            
-            if (!isBelow) {
-              document.body.appendChild(toggleButton);
-              toggleButton.style.display = 'flex';
-            }
-          };
-          
-          // Initial position setup
-          updateTogglePosition(shouldDisplayBelow);
-          
-          if (shouldDisplayBelow) {
-            // In below mode, always show chatter
-            formContainer.classList.add('vertical-layout');
-            chatterContainer.classList.remove('hidden');
-            formContainer.classList.remove('centered-form');
-          } else {
-            // In side mode, use initial preference for first load only
-            formContainer.classList.remove('vertical-layout');
-            if (initiallyHidden) {
-              chatterContainer.classList.add('hidden');
-              formContainer.classList.add('centered-form');
-              toggleButton.classList.remove('active');
-            } else {
-              chatterContainer.classList.remove('hidden');
-              formContainer.classList.remove('centered-form');
-              toggleButton.classList.add('active');
-            }
+  const toggleButton = createToggleButton();
+  formContainer.insertBefore(toggleButton, chatterContainer);
 
-            // Add click event listener that only affects UI, doesn't update storage
-            toggleButton.addEventListener('click', () => {
-              const isHidden = chatterContainer.classList.toggle('hidden');
-              formContainer.classList.toggle('centered-form');
-              toggleButton.classList.toggle('active');
-              // Removed the storage.sync.set call here
-            });
-          }
-          
-          // Modify the storage change listener
-          chrome.storage.onChanged.addListener((changes) => {
-            if (changes.displayBelow) {
-              const isBelow = changes.displayBelow.newValue;
-              if (isBelow) {
-                formContainer.classList.add('vertical-layout');
-                chatterContainer.classList.remove('hidden');
-                formContainer.classList.remove('centered-form');
-                updateTogglePosition(true);
-              } else {
-                formContainer.classList.remove('vertical-layout');
-                updateTogglePosition(false);
-                // Restore hidden state when switching back to side mode
-                const currentHidden = chatterContainer.classList.contains('hidden');
-                if (currentHidden) {
-                  formContainer.classList.add('centered-form');
-                  toggleButton.classList.remove('active');
-                } else {
-                  toggleButton.classList.add('active');
-                }
-              }
-            }
-            if (changes.hideChatter) {
-              if (changes.hideChatter.newValue) {
-                chatterContainer.classList.add('hidden');
-                formContainer.classList.add('centered-form');
-                toggleButton.classList.remove('active');
-              } else {
-                chatterContainer.classList.remove('hidden');
-                formContainer.classList.remove('centered-form');
-                toggleButton.classList.add('active');
-              }
-            }
-            if (changes.debugMode) {
-              handleDebugModeChange(changes.debugMode.newValue);
-            }
-          });
-        });
+  // Apply initial settings based on user preferences
+  chrome.storage.sync.get(['hideChatter', 'displayBelow'], function(result) {
+    const shouldDisplayBelow = result.displayBelow ?? false;
+    const defaultHidden = result.hideChatter ?? false;
+
+    // Show or hide the toggle button based on settings
+    toggleButton.style.display = !shouldDisplayBelow ? 'flex' : 'none';
+
+    if (shouldDisplayBelow) {
+      formContainer.classList.add('vertical-layout');
+      chatterContainer.classList.remove('hidden');
+      formContainer.classList.remove('centered-form');
+    } else {
+      formContainer.classList.remove('vertical-layout');
+      // Set initial state based on default setting
+      if (defaultHidden) {
+        chatterContainer.classList.add('hidden');
+        formContainer.classList.add('centered-form');
+        toggleButton.classList.remove('active');
+      } else {
+        chatterContainer.classList.remove('hidden');
+        formContainer.classList.remove('centered-form');
+        toggleButton.classList.add('active');
+      }
+
+      // Add click event listener to toggle chatter visibility
+      // But don't update storage - only manage current state
+      toggleButton.addEventListener('click', () => {
+        const isHidden = chatterContainer.classList.toggle('hidden');
+        formContainer.classList.toggle('centered-form');
+        toggleButton.classList.toggle('active');
+      });
     }
+  });
+}
+
+/**
+ * Removes the toggle button from the DOM.
+ */
+function removeToggleButton() {
+  const existingToggleButton = document.querySelector('.chatter-toggle');
+  if (existingToggleButton) {
+    existingToggleButton.remove();
+    console.log('Toggle button removed.');
   }
 }
 
-// Function to check if we're on a relevant page
-function isRelevantPage() {
-  return !!document.querySelector('.o-mail-ChatterContainer');
+/**
+ * Handles changes to the 'displayBelow' setting.
+ * @param {boolean} isBelow - Whether to display the chatter below the form.
+ * @param {Element} formContainer - The form container element.
+ * @param {Element} chatterContainer - The chatter container element.
+ * @param {Element} toggleButton - The toggle button element.
+ */
+function handleDisplayBelowChange(isBelow, formContainer, chatterContainer, toggleButton) {
+  if (isBelow) {
+    formContainer.classList.add('vertical-layout');
+    chatterContainer.classList.remove('hidden');
+    formContainer.classList.remove('centered-form');
+    toggleButton.style.display = 'none';
+  } else {
+    formContainer.classList.remove('vertical-layout');
+    toggleButton.style.display = 'flex';
+    const isHidden = chatterContainer.classList.contains('hidden');
+    formContainer.classList.toggle('centered-form', isHidden);
+    toggleButton.classList.toggle('active', !isHidden);
+  }
 }
+
+/**
+ * Handles changes to the 'hideChatter' setting.
+ * @param {boolean} isHidden - Whether the chatter should be hidden.
+ * @param {Element} formContainer - The form container element.
+ * @param {Element} chatterContainer - The chatter container element.
+ * @param {Element} toggleButton - The toggle button element.
+ */
+function handleHideChatterChange(isHidden, formContainer, chatterContainer, toggleButton) {
+  if (isHidden) {
+    chatterContainer.classList.add('hidden');
+    formContainer.classList.add('centered-form');
+    toggleButton.classList.remove('active');
+  } else {
+    chatterContainer.classList.remove('hidden');
+    formContainer.classList.remove('centered-form');
+    toggleButton.classList.add('active');
+  }
+}
+
+// Improved debug mode handling
+function handleDebugModeChange(enabled) {
+  // Don't modify debug mode on slides pages
+  if (isSlideUrl()) {
+    return;
+  }
+
+  const currentMode = getDebugMode();
+  const shouldBeEnabled = enabled && currentMode !== '1';
+  const shouldBeDisabled = !enabled && currentMode === '1';
+
+  if (shouldBeEnabled || shouldBeDisabled) {
+    updateDebugMode(enabled ? '1' : '');
+    window.location.reload();
+  }
+}
+
+// Add periodic check for debug mode consistency
+function checkDebugModeConsistency() {
+  chrome.storage.sync.get(['debugMode'], function(result) {
+    const shouldBeEnabled = result.debugMode ?? false;
+    const currentMode = getDebugMode();
+    
+    // Only update if there's a mismatch
+    if ((shouldBeEnabled && currentMode !== '1') || 
+        (!shouldBeEnabled && currentMode === '1')) {
+      handleDebugModeChange(shouldBeEnabled);
+    }
+  });
+}
+
+// Add URL change detection for debug mode consistency
+let lastPathname = window.location.pathname;
+setInterval(() => {
+  const currentPathname = window.location.pathname;
+  if (currentPathname !== lastPathname) {
+    lastPathname = currentPathname;
+    checkDebugModeConsistency();
+  }
+}, 1000);
+
+// Check debug mode consistency on page load
+checkDebugModeConsistency();
 
 // Debounced initialization function
-const debouncedInit = debounce(() => {
-  const existingButton = document.querySelector('.chatter-toggle');
-  if (existingButton) {
-    existingButton.remove();
-  }
-  if (isRelevantPage()) {
-    initChatterManager();
-  }
-}, 250);
+const debouncedInit = debounce(initChatterManager, 250);
 
-// Add throttle utility 
-function throttle(func, limit) {
-  let inThrottle;
-  return function(...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-}
-
-// Combined observer for url and chatter changes
+// Combined observer for URL and chatter changes
 const combinedObserver = new MutationObserver(throttle((mutations) => {
-  try {
-    // Track if we need updates
-    let needsUrlCheck = false;
-    let needsChatterCheck = false;
-    
-    for (const mutation of mutations) {
-      // Quick checks to determine type of update needed
-      if (mutation.target.nodeName === 'TITLE' || 
-          (mutation.type === 'attributes' && ['href', 'data-action'].includes(mutation.attributeName))) {
-        needsUrlCheck = true;
-      }
-      
-      if (!needsChatterCheck && mutation.type === 'childList') {
-        // Use more efficient checks for chatter-related changes
-        needsChatterCheck = Array.from(mutation.addedNodes).some(node => 
-          node.nodeType === Node.ELEMENT_NODE && (
-            node.matches?.('.o-mail-ChatterContainer') ||
-            node.querySelector?.('.o-mail-ChatterContainer')
-          )
-        );
-      }
-      
-      // Break early if we need both updates
-      if (needsUrlCheck && needsChatterCheck) break;
+  let chatterAddedOrRemoved = false;
+
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && node.matches('.o-mail-ChatterContainer, .o-mail-ChatterContainer *')) {
+          chatterAddedOrRemoved = true;
+        }
+      });
+
+      mutation.removedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && node.matches('.o-mail-ChatterContainer, .o-mail-ChatterContainer *')) {
+          chatterAddedOrRemoved = true;
+        }
+      });
     }
 
-    // Batch updates together
-    if (needsUrlCheck) {
-      const url = location.href;
-      if (url !== lastUrl) {
-        lastUrl = url;
-        debouncedInit();
-        initDebugMode();
-        handleSupportPageStyling();
-        trackRecentView();
-      }
+    if (mutation.type === 'attributes' && ['href', 'data-action'].includes(mutation.attributeName)) {
+      chatterAddedOrRemoved = true;
     }
-    if (needsChatterCheck) {
-      debouncedInit();
-    }
-  } catch (error) {
-    console.error('Error in mutation observer:', error);
+  });
+
+  if (chatterAddedOrRemoved) {
+    debouncedInit();
+    trackRecentView();
   }
 }, 150));
 
@@ -274,13 +298,11 @@ function disconnectObservers() {
   combinedObserver.disconnect();
 }
 
-// cleanup on page unload
+// Cleanup on page unload
 window.addEventListener('unload', disconnectObservers);
 
-// Initial check
-if (isRelevantPage()) {
-  initChatterManager();
-}
+// Initial check when the content script is loaded
+initChatterManager();
 
 // Debug Mode Functions
 function getDebugMode() {
@@ -291,7 +313,7 @@ function getDebugMode() {
 function updateDebugMode(mode) {
   const url = new URL(window.location.href);
   const currentMode = url.searchParams.get('debug');
-  
+
   // Only proceed if we're actually changing the mode
   if (currentMode !== mode) {
     if (mode) {
@@ -299,69 +321,27 @@ function updateDebugMode(mode) {
     } else {
       url.searchParams.delete('debug');
     }
-    
-    // Just update URL without reloading
+
+    // Update URL without reloading
     window.history.replaceState({}, '', url.toString());
   }
 }
 
-// Add this helper function
+// Slide URL and Help page detection
 function isSlideUrl() {
-  return window.location.pathname.includes('/slides/');
+  return window.location.pathname.includes('/slides/') || 
+         window.location.href.includes('odoo.com/help');
 }
 
-// Update the handleDebugModeChange function
-function handleDebugModeChange(enabled) {
-  // Don't modify debug mode on slides pages
-  if (isSlideUrl()) {
-    return;
-  }
-
-  const currentMode = getDebugMode();
-  
-  if (enabled) {
-    // If debug is not already enabled, set it to '1' and reload
-    if (!currentMode) {
-      updateDebugMode('1');
-      // Force page reload
-      window.location.reload();
-    }
-  } else {
-    // Remove debug mode if it's enabled and reload
-    if (currentMode) {
-      updateDebugMode('');
-      // Force page reload
-      window.location.reload();
-    }
-  }
-}
-
-// Update the initDebugMode function
-function initDebugMode() {
-  // Skip debug mode initialization for slides pages
-  if (isSlideUrl()) {
-    return;
-  }
-
-  chrome.storage.sync.get(['debugMode'], function(result) {
-    if (result.debugMode) {
-      handleDebugModeChange(true);
-    }
-  });
-}
-
-// Call initDebugMode on initial load
-initDebugMode(); 
-
-// support page detection
+// Support page detection
 function isSupportPage() {
   return window.location.pathname.includes('/_odoo/support');
 }
 
-// support page styling
+// Support page styling
 function handleSupportPageStyling() {
   if (!isSupportPage()) return;
-  
+
   chrome.storage.sync.get(['stylishSupport'], function(result) {
     // Find or create our custom style element
     let styleElement = document.getElementById('custom-support-styles');
@@ -399,6 +379,10 @@ chrome.storage.onChanged.addListener((changes) => {
   if (changes.stylishSupport) {
     handleSupportPageStyling();
   }
+  // Add debug mode handling
+  if (changes.debugMode) {
+    handleDebugModeChange(changes.debugMode.newValue);
+  }
 });
 
 // Initial check for support page
@@ -409,58 +393,58 @@ if (isSupportPage()) {
 function createTableOfContents() {
   // Only proceed if we're on a support page
   if (!isSupportPage()) return;
-  
+
   // Remove existing TOC if present
   const existingToc = document.querySelector('.toc-container');
   if (existingToc) existingToc.remove();
-  
+
   // Get all h2 headings
   const headings = Array.from(document.querySelectorAll('h2'));
   if (headings.length === 0) return;
-  
+
   // Create TOC container
   const tocContainer = document.createElement('div');
   tocContainer.className = 'toc-container';
-  
+
   // Add title
   const tocTitle = document.createElement('div');
   tocTitle.className = 'toc-title';
   tocTitle.textContent = 'Table of Contents';
   tocContainer.appendChild(tocTitle);
-  
+
   // Create list
   const tocList = document.createElement('ul');
   tocList.className = 'toc-list';
-  
+
   // Add entries for each heading
   headings.forEach((heading, index) => {
     // Add ID to heading if it doesn't have one
     if (!heading.id) {
       heading.id = `section-${index}`;
     }
-    
+
     const listItem = document.createElement('li');
     listItem.className = 'toc-item';
-    
+
     const link = document.createElement('a');
     link.className = 'toc-link';
     link.href = `#${heading.id}`;
     link.textContent = heading.textContent;
-    
+
     // Add smooth scroll behavior
     link.addEventListener('click', (e) => {
       e.preventDefault();
       heading.scrollIntoView({ behavior: 'smooth' });
       updateActiveLink(link);
     });
-    
+
     listItem.appendChild(link);
     tocList.appendChild(listItem);
   });
-  
+
   tocContainer.appendChild(tocList);
   document.body.appendChild(tocContainer);
-  
+
   // Add scroll spy functionality
   addScrollSpy(headings);
 }
@@ -470,7 +454,7 @@ function updateActiveLink(activeLink) {
   document.querySelectorAll('.toc-link').forEach(link => {
     link.classList.remove('active');
   });
-  
+
   // Add active class to current link
   if (activeLink) {
     activeLink.classList.add('active');
@@ -490,33 +474,32 @@ function addScrollSpy(headings) {
   }, {
     rootMargin: '-20% 0px -80% 0px'
   });
-  
+
   // Observe all headings
   headings.forEach(heading => observer.observe(heading));
 }
 
 // Support page navbar scroll
 function handleNavbarScroll() {
-    if (!isSupportPage()) return;
-    
-    const navbar = document.getElementById('support-nav');
-    if (!navbar) return;
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-} 
+  if (!isSupportPage()) return;
 
+  const navbar = document.getElementById('support-nav');
+  if (!navbar) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 10) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+}
 
 // Keyboard shortcuts manager
 function initKeyboardShortcut() {
   document.addEventListener('keydown', function(e) {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    
+
     // Command+Shift+X for Mac, Alt+C for others
     if ((isMac && e.metaKey && e.shiftKey && e.key.toLowerCase() === 'x') || 
         (!isMac && e.altKey && e.key.toLowerCase() === 'c')) {
@@ -524,7 +507,7 @@ function initKeyboardShortcut() {
       const toggleButton = document.querySelector('.chatter-toggle');
       if (toggleButton) {
         toggleButton.click();
-        
+
         // Show a subtle feedback tooltip
         const tooltip = document.createElement('div');
         tooltip.style.cssText = `
@@ -538,14 +521,14 @@ function initKeyboardShortcut() {
           z-index: 1001;
           font-size: 13px;
           pointer-events: none;
+          transition: opacity 0.3s ease;
         `;
         // Adjust tooltip text based on OS
         tooltip.textContent = `Chatter toggled (${isMac ? '⌘⇧X' : 'Alt+C'})`;
         document.body.appendChild(tooltip);
-        
+
         // Remove tooltip after animation
         setTimeout(() => {
-          tooltip.style.transition = 'opacity 0.3s ease';
           tooltip.style.opacity = '0';
           setTimeout(() => tooltip.remove(), 300);
         }, 1000);
@@ -554,5 +537,38 @@ function initKeyboardShortcut() {
   });
 }
 
-// Keyboard shortcuts 
+// Initialize keyboard shortcuts 
 initKeyboardShortcut(); 
+
+// MutationObserver to watch for dynamic content changes
+const observer = new MutationObserver(throttle((mutations) => {
+  let shouldReinitialize = false;
+
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.matches('.o-mail-ChatterContainer, .o_mail_chattercontainer') || node.querySelector('.o-mail-ChatterContainer, .o_mail_chattercontainer')) {
+            shouldReinitialize = true;
+          }
+        }
+      });
+
+      mutation.removedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.matches('.o-mail-ChatterContainer, .o_mail_chattercontainer') || node.querySelector('.o-mail-ChatterContainer, .o_mail_chattercontainer')) {
+            shouldReinitialize = true;
+          }
+        }
+      });
+    }
+  });
+
+  if (shouldReinitialize) {
+    initChatterManager();
+  }
+}, 500)); // Adjust the throttle delay as needed
+
+// Start observing the document body for mutations
+observer.observe(document.body, { childList: true, subtree: true });
+
