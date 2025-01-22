@@ -69,28 +69,76 @@ function formatTimestamp(timestamp) {
   }
 }
 
+// Load saved 'showDomains' state when popup opens
+chrome.storage.local.get(['showDomains'], function(result) {
+  // If there's no stored preference, default to true
+  document.getElementById('showDomainsToggle').checked = result.showDomains ?? true;
+});
+
+// Listen for toggle changes to update local storage
+document.getElementById('showDomainsToggle').addEventListener('change', function(e) {
+  // Save the new 'showDomains' setting to local storage
+  chrome.storage.local.set({ showDomains: e.target.checked }, function() {
+    // Refresh the recent views list to immediately reflect the toggle
+    displayRecentViews();
+  });
+});
+
 // Function to display recent views
 function displayRecentViews() {
+  // Get the container where recent views will be displayed
   const recentViewsList = document.getElementById('recentViewsList');
+  // If it doesn't exist, no need to proceed
   if (!recentViewsList) return;
 
-  chrome.storage.local.get(['recentViews'], function(result) {
-    const recentViews = result.recentViews || [];
-    
+  // Retrieve recent views and the showDomains setting from local storage
+  chrome.storage.local.get(['recentViews', 'showDomains'], function(result) {
+    // Read saved recentViews array or default to empty
+    let recentViews = result.recentViews || [];
+    // Determine if domains should be shown (default to true if undefined)
+    const showDomains = result.showDomains ?? true;
+
+    // Remove duplicate entries by URL
+    recentViews = recentViews.filter((view, index, self) => 
+      index === self.findIndex(v => v.url === view.url)
+    );
+
+    // If there are no recent views, display a placeholder message
     if (recentViews.length === 0) {
       recentViewsList.innerHTML = '<div class="recent-view-item" style="cursor: default; color: #666;">No recent views</div>';
       return;
     }
-    
+
+    // Build the HTML for the recent views list
+    // We display the page title and timestamp on the same row, 
+    // and place the domain name (if enabled) underneath.
     recentViewsList.innerHTML = recentViews
-      .map(view => `
-        <div class="recent-view-item" data-url="${view.url}" title="${view.title}">
-          ${view.title} <span style="color: #666; margin-left: 4px; font-size: 10px">${formatTimestamp(view.timestamp)}</span>
-        </div>
-      `)
+      .map(view => {
+        // Extract domain name from URL
+        const domain = new URL(view.url).hostname;
+        // Return the HTML string for each recent view item
+        return `
+          <div class="recent-view-item" data-url="${view.url}" title="${view.title}">
+            <!-- Container for the title and timestamp on the same line -->
+            <div class="recent-view-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <!-- Display the page title -->
+              <div class="recent-view-title">${view.title}</div>
+              <!-- Display the timestamp to the right of the title -->
+              <span class="recent-view-timestamp">${formatTimestamp(view.timestamp)}</span>
+            </div>
+            <!-- Display the domain below the title if showDomains is true -->
+            ${
+              showDomains 
+                ? `<div class="recent-view-domain" style="font-size: 11px; color: #666;">${domain}</div>`
+                : ''
+            }
+          </div>
+        `;
+      })
       .join('');
-    
-    // Add click handlers
+
+    // Add click handlers for each item so clicking a recent view 
+    // navigates to that URL in the current tab, then closes the popup
     recentViewsList.querySelectorAll('.recent-view-item').forEach(item => {
       item.addEventListener('click', () => {
         const url = item.dataset.url;

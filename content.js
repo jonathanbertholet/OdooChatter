@@ -500,9 +500,9 @@ function initKeyboardShortcut() {
   document.addEventListener('keydown', function(e) {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
-    // Command+Shift+X for Mac, Alt+C for others
+    // Command+Shift+X for Mac, Alt+Shift+C for Windows/Linux
     if ((isMac && e.metaKey && e.shiftKey && e.key.toLowerCase() === 'x') || 
-        (!isMac && e.altKey && e.key.toLowerCase() === 'c')) {
+        (!isMac && e.altKey && e.shiftKey && e.key.toLowerCase() === 'c')) {
       e.preventDefault();
       const toggleButton = document.querySelector('.chatter-toggle');
       if (toggleButton) {
@@ -524,7 +524,7 @@ function initKeyboardShortcut() {
           transition: opacity 0.3s ease;
         `;
         // Adjust tooltip text based on OS
-        tooltip.textContent = `Chatter toggled (${isMac ? '⌘⇧X' : 'Alt+C'})`;
+        tooltip.textContent = `Chatter toggled (${isMac ? '⌘⇧X' : 'Alt+Shift+C'})`;
         document.body.appendChild(tooltip);
 
         // Remove tooltip after animation
