@@ -1,74 +1,90 @@
 # Odoo Chatter Manager
 
-A Chrome extension that enhances the Odoo user experience with customizable chatter positioning, debug mode management, and improved support page styling.
+A powerful Chrome extension that enhances your Odoo experience with smart chatter management, keyboard shortcuts, and productivity features.
 
-## Features
+## ✨ Key Features
+
+### 🗨️ Smart Chatter Controls
+- Toggle chatter visibility with keyboard shortcuts (⌘⇧X on Mac, Alt+Shift+C on Windows/Linux)
+- Choose between side-by-side or vertical layout
+- Customize default chatter visibility and width
+- Persistent preferences across sessions
+
+### 🛠️ Developer Tools
+- Maintain debug mode across page navigation
+- Quick toggle without URL modification
+- Compatible with existing Odoo debug features
+
+### 📝 Recent Views
+- Track and access recently visited Odoo pages
+- Quick navigation to frequently used forms
+- Customizable domain display
+
+### ⚡ Quick Access
+- One-click access to Odoo settings
+- Keyboard shortcuts for common actions
+- Streamlined navigation
+
+## 🚀 Installation
+
+1. Download from Chrome Web Store (coming soon)
+   
+   OR
+
+2. Manual Installation:
+   ```bash
+   # Clone the repository
+   git clone https://github.com/jonathanbertholet/OdooChatter
+   
+   # Load in Chrome:
+   1. Open chrome://extensions/
+   2. Enable "Developer mode"
+   3. Click "Load unpacked"
+   4. Select the extension directory
+   ```
+
+## 💻 Usage
 
 ### Chatter Management
-- **Hide/Show Chatter**: Toggle the visibility of the chatter panel with a convenient side button
-- **Chatter Position**: Choose between side-by-side or vertical layout
-- **Default State**: Set your preferred default chatter visibility
+- Use keyboard shortcuts to toggle chatter visibility
+- Access settings via the extension popup
+- Choose your preferred layout (side-by-side/vertical)
+
+### Recent Views
+- Click the extension icon to see recently visited pages
+- Quick navigation to frequently used forms
+- Toggle domain display in settings
 
 ### Debug Mode
-- **Persistent Debug Mode**: Automatically maintain debug mode across page navigation
-- **Quick Toggle**: Enable/disable debug mode without manual URL modification
+- Enable persistent debug mode in settings
+- Automatically maintains debug state across navigation
+- Compatible with existing Odoo debug features
 
-### Support Page Enhancements
-- **Stylish Interface**: Modern styling for the Odoo support pages
-- **Table of Contents**: Auto-generated navigation for easy section access
-- **Improved Navigation**: Enhanced navbar with integrated impersonation controls
-- **Scroll Spy**: Active section highlighting while scrolling
+## ⌨️ Keyboard Shortcuts
 
-### Quick Access
-- **Settings Shortcut**: Direct access to Odoo settings page
-- **Persistent Settings**: Your preferences are saved across sessions
+| Action | Mac | Windows/Linux |
+|--------|-----|---------------|
+| Toggle Chatter | ⌘⇧X | Alt+Shift+C |
 
-## Installation
+## 🤝 Contributing
 
-1. Clone this repository or download the source code
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" in the top right
-4. Click "Load unpacked" and select the extension directory
+Contributions are welcome! Feel free to:
+- Submit issues
+- Propose new features
+- Create pull requests
 
-## Usage
+## 📄 License
 
-### Basic Configuration
-1. Click the extension icon in your Chrome toolbar
-2. Toggle the desired settings:
-   - Hide chatter
-   - Display chatter below
-   - Always debug mode
-   - Stylish Support
+This project is open source and available under the [MIT License](LICENSE).
 
-### Chatter Controls
-- Use the side toggle button to show/hide the chatter panel
-- Change chatter position in extension popup settings
+## 🔗 Links
 
-### Support Page Features
-The enhanced support page styling is available only for Odoo employees and includes:
-- Automatic table of contents generation
-- Smooth scrolling navigation
-- Improved layout and readability
-- Integrated impersonation controls in the navbar
+- [GitHub Repository](https://github.com/jonathanbertholet/OdooChatter)
+- [Report Issues](https://github.com/jonathanbertholet/OdooChatter/issues)
+- [Chrome web store](https://chromewebstore.google.com/detail/odoo-chatter-utilities/jnlkgngeodbbhjhfifdkameknejjgkdl)
 
-## Files Structure
+## 💡 Support
 
-- `manifest.json`: Extension configuration
-- `popup.html`: Extension popup interface
-- `popup.js`: Popup functionality
-- `content.js`: Main extension logic
-- `styles.css`: General extension styles
-- `support.css`: Support page enhancement styles
-
-## Requirements
-
-- Google Chrome browser
-- Access to Odoo pages (some features are specific to Odoo employees)
-
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## License
-
-[Your chosen license] 
+For support, please:
+1. Check the [GitHub Issues](https://github.com/jonathanbertholet/OdooChatter/issues) for existing problems
+2. Create a new issue if your problem isn't already reported
