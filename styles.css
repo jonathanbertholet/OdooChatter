@@ -177,3 +177,16 @@
   min-height: auto !important;
   flex: 0 1 auto !important;
 }
+
+/* Chatter is 35% of the screen width */
+.o_content > div:not(.vertical-layout):not(.centered-form) .o-mail-ChatterContainer {
+  width: 35% !important; /* Adjust this to whatever width suits your layout */
+  max-width: none !important;
+}
+
+/* Careful : name may be confusing : : when .keep-default-chatter-size is active, the chatter width is set to auto (narrow) */
+
+.keep-default-chatter-size .o_content > div:not(.vertical-layout):not(.centered-form) .o-mail-ChatterContainer {
+  width: auto !important;
+  max-width: none !important;
+}

@@ -1,6 +1,6 @@
 // Load saved states when popup opens
 chrome.storage.sync.get(
-  ['hideChatter', 'displayBelow', 'debugMode', 'stylishSupport'], 
+  ['hideChatter', 'displayBelow', 'debugMode', 'stylishSupport', 'keepDefaultChatterSize'], 
   function(result) {
     const hideChatterElement = document.getElementById('hideChatter');
     hideChatterElement.checked = result.hideChatter ?? false;
@@ -13,6 +13,8 @@ chrome.storage.sync.get(
     
     document.getElementById('debugMode').checked = result.debugMode ?? false;
     document.getElementById('stylishSupportToggle').checked = result.stylishSupport ?? false;
+    const keepDefaultChatterSizeEl = document.getElementById('keepDefaultChatterSize');
+    keepDefaultChatterSizeEl.checked = result.keepDefaultChatterSize ?? false;
 });
 
 // Update displayBelow event listener to manage hideChatter state
@@ -175,5 +177,12 @@ document.getElementById('settingsLink').addEventListener('click', function() {
       // Close the popup
       window.close();
     }
+  });
+});
+
+// Add keepDefaultChatterSize event listener - this is a toggle that will set the chatter width to auto (narrow)
+document.getElementById('keepDefaultChatterSize').addEventListener('change', function(e) {
+  chrome.storage.sync.set({
+    keepDefaultChatterSize: e.target.checked
   });
 });

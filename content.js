@@ -572,3 +572,32 @@ const observer = new MutationObserver(throttle((mutations) => {
 // Start observing the document body for mutations
 observer.observe(document.body, { childList: true, subtree: true });
 
+
+
+// ------------------------------------------------------
+// 1) Function to toggle the "keep-default-chatter-size" class
+// ------------------------------------------------------
+function applyChatterSizePreference(keepDefaultChatterSize) {
+  // We apply the class to the <html> (or <body>) so it cascades over all .o-mail-ChatterContainer
+  if (keepDefaultChatterSize) {
+    document.documentElement.classList.add('keep-default-chatter-size');
+  } else {
+    document.documentElement.classList.remove('keep-default-chatter-size');
+  }
+}
+// ------------------------------------------------------
+// 2) Retrieve and apply the current keepDefaultChatterSize on load
+// ------------------------------------------------------
+chrome.storage.sync.get(['keepDefaultChatterSize'], function(result) {
+  applyChatterSizePreference(result.keepDefaultChatterSize ?? false);
+});
+
+// ------------------------------------------------------
+// 3) Listen for changes and re-apply as needed
+// ------------------------------------------------------
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes.keepDefaultChatterSize) {
+    applyChatterSizePreference(changes.keepDefaultChatterSize.newValue);
+  }
+});
+
