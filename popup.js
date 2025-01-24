@@ -17,7 +17,7 @@ chrome.storage.sync.get(
     keepDefaultChatterSizeEl.checked = result.keepDefaultChatterSize ?? false;
 });
 
-// Update displayBelow event listener to manage hideChatter state
+// Update displayBelow event listener to manage hideChatter state and refresh the page
 document.getElementById('displayBelow').addEventListener('change', function(e) {
   const hideChatterElement = document.getElementById('hideChatter');
   hideChatterElement.disabled = e.target.checked;
@@ -28,11 +28,25 @@ document.getElementById('displayBelow').addEventListener('change', function(e) {
     chrome.storage.sync.set({
       hideChatter: false,
       displayBelow: true
+    }, () => {
+      // Refresh the current active tab to apply changes
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (tabs[0]) {
+          chrome.tabs.reload(tabs[0].id);
+        }
+      });
     });
   } else {
     // Only update displayBelow when turning it off
     chrome.storage.sync.set({
       displayBelow: false
+    }, () => {
+      // Refresh the current active tab to apply changes
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (tabs[0]) {
+          chrome.tabs.reload(tabs[0].id);
+        }
+      });
     });
   }
 });
