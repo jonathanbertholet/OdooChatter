@@ -1,202 +1,630 @@
-// Load saved states when popup opens
-chrome.storage.sync.get(
-  ['hideChatter', 'displayBelow', 'debugMode', 'stylishSupport', 'keepDefaultChatterSize'], 
-  function(result) {
-    const hideChatterElement = document.getElementById('hideChatter');
-    hideChatterElement.checked = result.hideChatter ?? false;
-    
-    const displayBelowElement = document.getElementById('displayBelow');
-    displayBelowElement.checked = result.displayBelow ?? false;
-    
-    // Disable hideChatter if displayBelow is enabled
-    hideChatterElement.disabled = displayBelowElement.checked;
-    
-    document.getElementById('debugMode').checked = result.debugMode ?? false;
-    document.getElementById('stylishSupportToggle').checked = result.stylishSupport ?? false;
-    const keepDefaultChatterSizeEl = document.getElementById('keepDefaultChatterSize');
-    keepDefaultChatterSizeEl.checked = result.keepDefaultChatterSize ?? false;
-});
+// popup.js
+// Immediately Invoked Function Expression (IIFE) to encapsulate the code
+(() => {
+  /**
+   * Cache DOM elements for performance and readability
+   */
+  const DOM = {
+    hideChatter: document.getElementById('hideChatter'),
+    displayBelow: document.getElementById('displayBelow'),
+    debugMode: document.getElementById('debugMode'),
+    stylishSupportToggle: document.getElementById('stylishSupportToggle'),
+    showDomainsToggle: document.getElementById('showDomainsToggle'),
+    recentViewsList: document.getElementById('recentViewsList'),
+    settingsLink: document.getElementById('settingsLink'),
+    pinPageButton: document.getElementById('pinPageButton'),
+    pinsList: document.getElementById('pinsList'),
+    recentViewsSearch: document.getElementById('recentViewsSearch'),
+  };
 
-// Update displayBelow event listener to manage hideChatter state and refresh the page
-document.getElementById('displayBelow').addEventListener('change', function(e) {
-  const hideChatterElement = document.getElementById('hideChatter');
-  hideChatterElement.disabled = e.target.checked;
-  
-  // If enabling displayBelow, uncheck and save hideChatter as false
-  if (e.target.checked) {
-    hideChatterElement.checked = false;
-    chrome.storage.sync.set({
-      hideChatter: false,
-      displayBelow: true
-    }, () => {
-      // Refresh the current active tab to apply changes
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  /**
+   * Storage Utilities
+   * Handles interactions with chrome.storage (sync and local)
+   */
+  const StorageUtil = {
+    // Sync storage methods
+    getSync: (keys) => new Promise((resolve) => chrome.storage.sync.get(keys, resolve)),
+    setSync: (items) => new Promise((resolve) => chrome.storage.sync.set(items, resolve)),
+
+    // Local storage methods
+    getLocal: (keys) => new Promise((resolve) => chrome.storage.local.get(keys, resolve)),
+    setLocal: (items) => new Promise((resolve) => chrome.storage.local.set(items, resolve)),
+  };
+
+  /**
+   * Utility Functions
+   */
+  const Utils = {
+    /**
+     * Debounce function to limit the rate at which a function can fire.
+     * @param {Function} func - The function to debounce.
+     * @param {number} wait - The debounce interval in milliseconds.
+     * @returns {Function}
+     */
+    debounce(func, wait) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    },
+
+    /**
+     * Format timestamp into a readable string.
+     * @param {number} timestamp - The timestamp to format.
+     * @returns {string} - Formatted timestamp.
+     */
+    formatTimestamp(timestamp) {
+      const now = new Date();
+      const date = new Date(timestamp);
+      const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+
+      if (diffInHours < 1) {
+        return 'Just now';
+      } else if (diffInHours < 24) {
+        return `${diffInHours}h ago`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    },
+
+    /**
+     * Parses the app name from the URL path.
+     * @param {string} url - The URL of the page.
+     * @returns {string} - The app name (e.g., 'Project', 'Contacts').
+     */
+    getAppNameFromUrl(url) {
+      try {
+        const path = new URL(url).pathname;
+        const segments = path.split('/').filter(segment => segment);
+        return segments[1] ? segments[1].charAt(0).toUpperCase() + segments[1].slice(1) : 'App';
+      } catch (error) {
+        console.error('Invalid URL:', url, error);
+        return 'App';
+      }
+    },
+  };
+
+  /**
+   * Tab Utilities
+   * Handles operations related to browser tabs
+   */
+  const TabUtil = {
+    /**
+     * Reloads the active tab to apply changes.
+     */
+    reloadActiveTab() {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]) {
           chrome.tabs.reload(tabs[0].id);
         }
       });
-    });
-  } else {
-    // Only update displayBelow when turning it off
-    chrome.storage.sync.set({
-      displayBelow: false
-    }, () => {
-      // Refresh the current active tab to apply changes
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        if (tabs[0]) {
-          chrome.tabs.reload(tabs[0].id);
-        }
-      });
-    });
-  }
-});
+    },
 
-// Add hideChatter event listener
-document.getElementById('hideChatter').addEventListener('change', function(e) {
-  chrome.storage.sync.set({
-    hideChatter: e.target.checked
-  });
-});
-
-document.getElementById('debugMode').addEventListener('change', function(e) {
-  chrome.storage.sync.set({
-    debugMode: e.target.checked
-  });
-});
-
-document.getElementById('stylishSupportToggle').addEventListener('change', function(e) {
-  chrome.storage.sync.set({
-    stylishSupport: e.target.checked
-  });
-});
-
-// Function to format timestamp
-function formatTimestamp(timestamp) {
-  const now = new Date();
-  const date = new Date(timestamp);
-  const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
-  
-  if (diffInHours < 1) {
-    return 'Just now';
-  } else if (diffInHours < 24) {
-    return `${diffInHours}h ago`;
-  } else {
-    return date.toLocaleDateString();
-  }
-}
-
-// Load saved 'showDomains' state when popup opens
-chrome.storage.local.get(['showDomains'], function(result) {
-  // If there's no stored preference, default to true
-  document.getElementById('showDomainsToggle').checked = result.showDomains ?? true;
-});
-
-// Listen for toggle changes to update local storage
-document.getElementById('showDomainsToggle').addEventListener('change', function(e) {
-  // Save the new 'showDomains' setting to local storage
-  chrome.storage.local.set({ showDomains: e.target.checked }, function() {
-    // Refresh the recent views list to immediately reflect the toggle
-    displayRecentViews();
-  });
-});
-
-// Function to display recent views
-function displayRecentViews() {
-  // Get the container where recent views will be displayed
-  const recentViewsList = document.getElementById('recentViewsList');
-  // If it doesn't exist, no need to proceed
-  if (!recentViewsList) return;
-
-  // Retrieve recent views and the showDomains setting from local storage
-  chrome.storage.local.get(['recentViews', 'showDomains'], function(result) {
-    // Read saved recentViews array or default to empty
-    let recentViews = result.recentViews || [];
-    // Determine if domains should be shown (default to true if undefined)
-    const showDomains = result.showDomains ?? true;
-
-    // Remove duplicate entries by URL
-    recentViews = recentViews.filter((view, index, self) => 
-      index === self.findIndex(v => v.url === view.url)
-    );
-
-    // If there are no recent views, display a placeholder message
-    if (recentViews.length === 0) {
-      recentViewsList.innerHTML = '<div class="recent-view-item" style="cursor: default; color: #666;">No recent views</div>';
-      return;
-    }
-
-    // Build the HTML for the recent views list
-    // We display the page title and timestamp on the same row, 
-    // and place the domain name (if enabled) underneath.
-    recentViewsList.innerHTML = recentViews
-      .map(view => {
-        // Extract domain name from URL
-        const domain = new URL(view.url).hostname;
-        // Return the HTML string for each recent view item
-        return `
-          <div class="recent-view-item" data-url="${view.url}" title="${view.title}">
-            <!-- Container for the title and timestamp on the same line -->
-            <div class="recent-view-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <!-- Display the page title -->
-              <div class="recent-view-title">${view.title}</div>
-              <!-- Display the timestamp to the right of the title -->
-              <span class="recent-view-timestamp">${formatTimestamp(view.timestamp)}</span>
-            </div>
-            <!-- Display the domain below the title if showDomains is true -->
-            ${
-              showDomains 
-                ? `<div class="recent-view-domain" style="font-size: 11px; color: #666;">${domain}</div>`
-                : ''
-            }
-          </div>
-        `;
-      })
-      .join('');
-
-    // Add click handlers for each item so clicking a recent view 
-    // navigates to that URL in the current tab, then closes the popup
-    recentViewsList.querySelectorAll('.recent-view-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const url = item.dataset.url;
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          chrome.tabs.update(tabs[0].id, {url: url});
-          window.close();
+    /**
+     * Retrieves the current active tab's URL and details.
+     * @returns {Promise<{url: string, title: string}>}
+     */
+    getCurrentTab() {
+      return new Promise((resolve, reject) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (tabs[0]) {
+            resolve({ url: tabs[0].url, title: tabs[0].title });
+          } else {
+            reject('No active tab found.');
+          }
         });
       });
-    });
-  });
-}
+    },
 
-// Call displayRecentViews when popup opens
-document.addEventListener('DOMContentLoaded', displayRecentViews);
+    /**
+     * Opens the settings page in a new tab.
+     */
+    navigateToSettings() {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+          try {
+            const currentTab = tabs[0];
+            const url = new URL(currentTab.url);
+            const settingsUrl = `${url.origin}/odoo/settings?debug=1`;
 
-// Listen for storage changes to update the list
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.recentViews) {
-    displayRecentViews();
-  }
-});
+            // Open the settings URL in a new tab
+            chrome.tabs.create({ url: settingsUrl }, () => {
+              window.close(); // Close the popup after opening the new tab
+            });
+          } catch (error) {
+            console.error('Error navigating to settings:', error);
+          }
+        }
+      });
+    },
 
-// Settings link handler
-document.getElementById('settingsLink').addEventListener('click', function() {
-  // Query for the active tab
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    if (tabs[0]) {
-      const currentTab = tabs[0];
-      const url = new URL(currentTab.url);
-      // Append /odoo/settings?debug=1 to the base URL
-      const settingsUrl = `${url.origin}/odoo/settings?debug=1`;
-      // Navigate the current tab
-      chrome.tabs.update(currentTab.id, {url: settingsUrl});
-      // Close the popup
-      window.close();
+    /**
+     * Opens a given URL in the current tab.
+     * @param {string} url - The URL to open.
+     */
+    openUrlInCurrentTab(url) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+          chrome.tabs.update(tabs[0].id, { url });
+          window.close(); // Optional: Close the popup after navigating
+        }
+      });
+    },
+  };
+
+  /**
+   * Pin Management
+   * Handles adding, removing, and rendering pinned pages
+   */
+  const PinManager = {
+    /**
+     * Loads pinned pages from local storage.
+     * @returns {Promise<Array>}
+     */
+    async getPins() {
+      const result = await StorageUtil.getLocal(['pinnedPages']);
+      return result.pinnedPages || [];
+    },
+
+    /**
+     * Saves pinned pages to local storage.
+     * @param {Array} pins - The array of pinned pages.
+     * @returns {Promise}
+     */
+    setPins(pins) {
+      return StorageUtil.setLocal({ pinnedPages: pins });
+    },
+
+    /**
+     * Adds the current page to the pinned pages.
+     */
+    async addPin() {
+      try {
+        const { url, title } = await TabUtil.getCurrentTab();
+        const appName = Utils.getAppNameFromUrl(url);
+        let pins = await this.getPins();
+
+        // Check for duplicates
+        if (pins.find(pin => pin.url === url)) {
+          alert('This page is already pinned.');
+          return;
+        }
+
+        // Add new pin
+        pins.push({ url, title, appName });
+        await this.setPins(pins);
+        UIManager.renderPins();
+      } catch (error) {
+        console.error('Error adding pin:', error);
+      }
+    },
+
+    /**
+     * Removes a pinned page by its URL.
+     * @param {string} url - The URL of the pinned page to remove.
+     */
+    async removePin(url) {
+      try {
+        let pins = await this.getPins();
+        // Filter out the pin with the matching URL
+        pins = pins.filter(pin => pin.url !== url);
+        await this.setPins(pins);
+        UIManager.renderPins();
+      } catch (error) {
+        console.error('Error removing pin:', error);
+      }
+    },
+
+    /**
+     * Enables drag-and-drop functionality for rearranging pinned pages.
+     */
+    enableDragAndDrop() {
+      const pinsList = DOM.pinsList;
+      let draggedElement = null;
+
+      // Add draggable attribute to each pinned-button
+      const draggablePins = pinsList.querySelectorAll('.pinned-button');
+      draggablePins.forEach((pin) => {
+        pin.setAttribute('draggable', true);
+
+        // Drag start event
+        pin.addEventListener('dragstart', (e) => {
+          draggedElement = pin;
+          e.dataTransfer.effectAllowed = 'move';
+          // Optional: Add a drag image
+          e.dataTransfer.setDragImage(pin, 20, 20);
+        });
+
+        // Drag over event
+        pin.addEventListener('dragover', (e) => {
+          e.preventDefault(); // Necessary to allow dropping
+          e.dataTransfer.dropEffect = 'move';
+        });
+
+        // Drop event
+        pin.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (draggedElement && draggedElement !== pin) {
+            // Insert the dragged element before the drop target
+            pinsList.insertBefore(draggedElement, pin);
+            this.savePinOrder();
+          }
+        });
+
+        // Drag end event
+        pin.addEventListener('dragend', () => {
+          draggedElement = null;
+        });
+      });
+    },
+
+    /**
+     * Saves the current order of pinned pages to local storage.
+     */
+    async savePinOrder() {
+      try {
+        const pinsList = DOM.pinsList;
+        const pinElements = pinsList.querySelectorAll('.pinned-button');
+        const newOrder = [];
+
+        pinElements.forEach((pinEl) => {
+          const url = pinEl.dataset.url;
+          const title = pinEl.querySelector('.pinned-page-name').textContent;
+          const appName = pinEl.querySelector('.pinned-app-name').textContent;
+          newOrder.push({ url, title, appName });
+        });
+
+        await this.setPins(newOrder);
+      } catch (error) {
+        console.error('Error saving pin order:', error);
+      }
+    },
+  };
+
+  /**
+   * UI Management
+   * Handles rendering and event binding for UI components
+   */
+  const UIManager = {
+    /**
+     * Renders the pinned pages in the popup with remove buttons and drag-and-drop enabled.
+     */
+    async renderPins() {
+      try {
+        const pins = await PinManager.getPins();
+        DOM.pinsList.innerHTML = ''; // Clear existing pins
+
+        pins.forEach((pin) => {
+          const button = document.createElement('div');
+          button.className = 'pinned-button';
+          button.dataset.url = pin.url;
+
+          // Add tooltip for the entire button
+          button.title = pin.title;
+
+          const appName = document.createElement('div');
+          appName.className = 'pinned-app-name';
+          appName.textContent = pin.appName;
+
+          const pageName = document.createElement('div');
+          pageName.className = 'pinned-page-name';
+          pageName.textContent = pin.title;
+
+          // Append app name and page name to the button
+          button.appendChild(appName);
+          button.appendChild(pageName);
+
+          // Add the remove button
+          this.addRemoveButton(button, pin);
+
+          // Event listener to open the pinned page in the current tab
+          button.addEventListener('click', () => {
+            TabUtil.openUrlInCurrentTab(pin.url);
+          });
+
+          // Append the button to the pins list
+          DOM.pinsList.appendChild(button);
+        });
+
+        // Enable drag-and-drop after rendering all pins
+        PinManager.enableDragAndDrop();
+      } catch (error) {
+        console.error('Error rendering pins:', error);
+      }
+    },
+
+    /**
+     * Adds a remove button to each pinned page and sets up its event listener.
+     * @param {HTMLElement} button - The pinned-button element.
+     * @param {Object} pin - The pinned page object containing url, title, and appName.
+     */
+    addRemoveButton(button, pin) {
+      // Create the remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-pin-button';
+      removeBtn.textContent = '×'; //
+
+      // Prevent the click event from bubbling up to the parent button
+      removeBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent opening the pinned page
+        PinManager.removePin(pin.url);
+      });
+
+      // Append the remove button to the pinned button
+      button.appendChild(removeBtn);
+    },
+
+    /**
+     * Displays recent views by fetching data from local storage and updating the DOM.
+     * @param {string} [filter=''] - Optional search filter to apply.
+     */
+    async displayRecentViews(filter = '') {
+      try {
+        if (!DOM.recentViewsList) return;
+
+        const { recentViews = [], showDomains = true } = await StorageUtil.getLocal([
+          'recentViews',
+          'showDomains',
+        ]);
+
+        // Remove duplicate entries by URL
+        const uniqueRecentViews = recentViews.filter(
+          (view, index, self) => index === self.findIndex((v) => v.url === view.url)
+        );
+
+        // Clear existing content
+        DOM.recentViewsList.innerHTML = '';
+
+        if (uniqueRecentViews.length === 0) {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'recent-view-item';
+          placeholder.style.cursor = 'default';
+          placeholder.style.color = '#666';
+          placeholder.textContent = 'No recently visited pages';
+          DOM.recentViewsList.appendChild(placeholder);
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        uniqueRecentViews.forEach((view) => {
+          // Apply filter if provided
+          if (
+            filter &&
+            !view.title.toLowerCase().includes(filter.toLowerCase()) &&
+            !view.url.toLowerCase().includes(filter.toLowerCase())
+          ) {
+            return; // Skip rendering this item if it doesn't match the filter
+          }
+
+          const item = document.createElement('div');
+          item.className = 'recent-view-item';
+          item.dataset.url = view.url;
+          item.title = view.title;
+
+          // Header containing title and timestamp
+          const header = document.createElement('div');
+          header.className = 'recent-view-header';
+          header.style.display = 'flex';
+          header.style.justifyContent = 'space-between';
+          header.style.alignItems = 'center';
+
+          const title = document.createElement('div');
+          title.className = 'recent-view-title';
+          title.textContent = view.title;
+
+          const timestamp = document.createElement('span');
+          timestamp.className = 'recent-view-timestamp';
+          timestamp.textContent = Utils.formatTimestamp(view.timestamp);
+
+          header.appendChild(title);
+          header.appendChild(timestamp);
+          item.appendChild(header);
+
+          // Domain name displayed below the title if enabled
+          if (showDomains) {
+            try {
+              const domain = new URL(view.url).hostname;
+              const domainDiv = document.createElement('div');
+              domainDiv.className = 'recent-view-domain';
+              domainDiv.style.fontSize = '11px';
+              domainDiv.style.color = '#666';
+              domainDiv.textContent = domain;
+              item.appendChild(domainDiv);
+            } catch (error) {
+              console.error('Invalid URL:', view.url, error);
+            }
+          }
+
+          fragment.appendChild(item);
+        });
+
+        DOM.recentViewsList.appendChild(fragment);
+      } catch (error) {
+        console.error('Error displaying recent views:', error);
+      }
+    },
+
+    /**
+     * Initializes the popup by loading saved states and setting up the UI.
+     */
+    async initializePopup() {
+      try {
+        // Load sync storage states
+        const syncResult = await StorageUtil.getSync([
+          'hideChatter',
+          'displayBelow',
+          'debugMode',
+          'stylishSupport',
+        ]);
+
+        const {
+          hideChatter = false,
+          displayBelow = false,
+          debugMode = false,
+          stylishSupport = false,
+        } = syncResult;
+
+        DOM.hideChatter.checked = hideChatter;
+        DOM.displayBelow.checked = displayBelow;
+        DOM.hideChatter.disabled = displayBelow;
+        DOM.debugMode.checked = debugMode;
+        DOM.stylishSupportToggle.checked = stylishSupport;
+
+        // Load local storage states
+        const localResult = await StorageUtil.getLocal(['showDomains']);
+        DOM.showDomainsToggle.checked = localResult.showDomains ?? true;
+
+        // Display recent views based on loaded settings
+        await this.displayRecentViews();
+
+        // Set up search filter event listener and focus on the search field
+        if (DOM.recentViewsSearch) {
+          // Automatically focus on the search input when popup opens
+          DOM.recentViewsSearch.focus();
+
+          // Add event listener for input in the search field
+          DOM.recentViewsSearch.addEventListener('input', Utils.debounce((e) => {
+            const query = e.target.value.trim();
+            this.displayRecentViews(query);
+          }, 300)); // Debounce to optimize performance
+        }
+
+        // Render pinned pages
+        await this.renderPins();
+      } catch (error) {
+        console.error('Error initializing popup:', error);
+      }
+    },
+
+    /**
+     * Sets up all necessary event listeners.
+     */
+    setupEventListeners() {
+      /**
+       * Event listener for changes in 'displayBelow' toggle
+       */
+      DOM.displayBelow.addEventListener('change', async (e) => {
+        try {
+          DOM.hideChatter.disabled = e.target.checked;
+
+          if (e.target.checked) {
+            DOM.hideChatter.checked = false;
+            await StorageUtil.setSync({ hideChatter: false, displayBelow: true });
+            TabUtil.reloadActiveTab();
+          } else {
+            await StorageUtil.setSync({ displayBelow: false });
+            TabUtil.reloadActiveTab();
+          }
+        } catch (error) {
+          console.error('Error handling displayBelow change:', error);
+        }
+      });
+
+      /**
+       * Generic event listeners for toggle changes to update storage
+       */
+      const handleToggleChange = async (toggleElement, storageKey, callback) => {
+        try {
+          const isChecked = toggleElement.checked;
+          if (storageKey === 'showDomains') {
+            await StorageUtil.setLocal({ [storageKey]: isChecked });
+          } else {
+            await StorageUtil.setSync({ [storageKey]: isChecked });
+          }
+          if (callback) callback(isChecked);
+        } catch (error) {
+          console.error(`Error updating ${storageKey}:`, error);
+        }
+      };
+
+      DOM.hideChatter.addEventListener('change', () => {
+        handleToggleChange(DOM.hideChatter, 'hideChatter');
+      });
+
+      DOM.debugMode.addEventListener('change', () => {
+        handleToggleChange(DOM.debugMode, 'debugMode');
+      });
+
+      DOM.stylishSupportToggle.addEventListener('change', () => {
+        handleToggleChange(DOM.stylishSupportToggle, 'stylishSupport');
+      });
+
+      DOM.showDomainsToggle.addEventListener(
+        'change',
+        Utils.debounce(() => {
+          handleToggleChange(DOM.showDomainsToggle, 'showDomains', () => {
+            this.displayRecentViews();
+          });
+        }, 300)
+      );
+
+      // Event listener for settings link click
+      DOM.settingsLink.addEventListener('click', () => TabUtil.navigateToSettings());
+
+      // Event listener for the "Pin Page" button
+      DOM.pinPageButton.addEventListener('click', () => PinManager.addPin());
+
+      /**
+       * Event delegation for handling clicks on recent view items.
+       * This approach reduces the number of event listeners by utilizing a single listener on the parent.
+       */
+      DOM.recentViewsList.addEventListener('click', (event) => {
+        const item = event.target.closest('.recent-view-item');
+        if (item) {
+          const url = item.dataset.url;
+          TabUtil.openUrlInCurrentTab(url);
+        }
+      });
+    },
+  };
+
+  /**
+   * Event Listener for storage changes to update the recent views list and pins dynamically
+   */
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.recentViews) {
+      const query = DOM.recentViewsSearch ? DOM.recentViewsSearch.value.trim() : '';
+      UIManager.displayRecentViews(query);
+    }
+
+    if (changes.pinnedPages) {
+      UIManager.renderPins();
     }
   });
-});
 
-// Add keepDefaultChatterSize event listener - this is a toggle that will set the chatter width to auto (narrow)
-document.getElementById('keepDefaultChatterSize').addEventListener('change', function(e) {
-  chrome.storage.sync.set({
-    keepDefaultChatterSize: e.target.checked
+  /**
+   * Collapsible Settings Initialization
+   */
+  const initializeCollapsibleSettings = () => {
+    const settingsHeader = document.getElementById('settingsHeader');
+    const settingsSection = settingsHeader.closest('.settings-section');
+
+    // Load saved state
+    StorageUtil.getLocal(['settingsCollapsed']).then(result => {
+      if (result.settingsCollapsed) {
+        settingsSection.classList.add('collapsed');
+      }
+    });
+
+    settingsHeader.addEventListener('click', () => {
+      settingsSection.classList.toggle('collapsed');
+
+      // Save state
+      StorageUtil.setLocal({
+        settingsCollapsed: settingsSection.classList.contains('collapsed')
+      });
+    });
+  };
+
+  /**
+   * Initialize all components when the DOM is fully loaded
+   */
+  document.addEventListener('DOMContentLoaded', () => {
+    UIManager.initializePopup();
+    UIManager.setupEventListeners();
+    initializeCollapsibleSettings();
   });
-});
+})();
+

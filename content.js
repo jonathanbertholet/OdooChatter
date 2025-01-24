@@ -5,8 +5,8 @@ const CONFIG = {
   DEBOUNCE_INTERVAL: 250,   // Delay for debouncing
   THROTTLE_INTERVAL: 150,   // Delay for throttling
   SUPPORT_NAVBAR_SCROLL_THRESHOLD: 20,  // Scroll threshold for support navbar
-  RECENT_VIEWS_LIMIT: 50,   // Maximum number of recent views stored
-  DEBUG_MODE_CHECK_INTERVAL: 5000, // Interval to check path changes for debug mode mismatch
+  RECENT_VIEWS_LIMIT: 35,   // Maximum number of recent views stored
+  DEBUG_MODE_CHECK_INTERVAL: 10000, // Interval to check path changes for debug mode mismatch
 };
 
 // URL management
@@ -596,19 +596,19 @@ initChatterManager(); // Initial check when the script is first loaded
  * Toggles a class on the HTML element to restore default Chatter size if requested.
  * @param {boolean} keepDefaultChatterSize 
  */
-function applyChatterSizePreference(keepDefaultChatterSize) {
-  // We apply the class to the <html> so it cascades over all .o-mail-ChatterContainer
-  if (keepDefaultChatterSize) {
-    document.documentElement.classList.add('keep-default-chatter-size');
-  } else {
-    document.documentElement.classList.remove('keep-default-chatter-size');
-  }
-}
+// function applyChatterSizePreference(keepDefaultChatterSize) {
+//   // We apply the class to the <html> so it cascades over all .o-mail-ChatterContainer
+//   if (keepDefaultChatterSize) {
+//     document.documentElement.classList.add('keep-default-chatter-size');
+//   } else {
+//     document.documentElement.classList.remove('keep-default-chatter-size');
+//   }
+// }
 
-// Retrieve and apply keepDefaultChatterSize on load
-chrome.storage.sync.get(['keepDefaultChatterSize'], function(result) {
-  applyChatterSizePreference(result.keepDefaultChatterSize ?? false);
-});
+// // Retrieve and apply keepDefaultChatterSize on load
+// chrome.storage.sync.get(['keepDefaultChatterSize'], function(result) {
+//   applyChatterSizePreference(result.keepDefaultChatterSize ?? false);
+// });
 
 // Listen for changes and re-apply as needed
 chrome.storage.onChanged.addListener((changes) => {
@@ -622,7 +622,7 @@ chrome.storage.onChanged.addListener((changes) => {
   }
   // Chatter size preference toggling
   if (changes.keepDefaultChatterSize) {
-    applyChatterSizePreference(changes.keepDefaultChatterSize.newValue);
+    // applyChatterSizePreference(changes.keepDefaultChatterSize.newValue);
   }
 });
 

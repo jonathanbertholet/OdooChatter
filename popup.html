@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+  <h2>Odoo Chatter Utilities</h2>
   <!-- Quick Links section first -->
   <section class="quick-links">
     <div class="link-row">
@@ -18,90 +19,43 @@
     </div>
   </section>
 
+  <!-- Pins section -->
+  <section class="pins-section">
+    <h3>Pinned Pages</h3>
+    <div id="pinsList" class="pins-list">
+      <!-- Pinned pages will be populated by JavaScript -->
+    </div>
+    <div class="button-container">
+      <button id="pinPageButton" class="action-button">
+        <svg viewBox="0 0 24 24" class="button-icon">
+          <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" fill="currentColor"/>
+        </svg>
+        Pin Page
+      </button>
+      <button id="settingsLink" class="action-button">
+        <svg viewBox="0 0 24 24" class="button-icon">
+          <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
+        </svg>
+        Odoo Settings
+      </button>
+    </div>
+  </section>
+  <div class="section-separator"></div>
+
   <!-- Recent Views section -->
   <section class="recent-views">
     <h3>Recently opened</h3>
+    
+    <!-- Search Filter -->
+    <div class="search-filter">
+      <input type="text" id="recentViewsSearch" placeholder="Search recent views..." />
+    </div>
+
     <div id="recentViewsList" class="recent-views-list">
       <!-- Recent views populated by JavaScript -->
     </div>
   </section>
-
-  <!-- Settings section -->
-  <section class="settings-section">
-    <h3>Settings</h3>
-    
-    <div class="settings-group">
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Hide chatter by default</span>
-          <div class="setting-description">Always fold the chatter</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="hideChatter" disabled>
-          <span class="slider"></span>
-        </label>
-      </div>
-      
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Display chatter below</span>
-          <div class="setting-description">Always display chatter below</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="displayBelow">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Permanent Debug mode</span>
-          <div class="setting-description"><b>Important :</b> Conflict with the "Odoo Debug" extension. You can uninstall it.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="debugMode">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Stylish Support Page</span>
-          <div class="setting-description">For Odoo Employees</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="stylishSupportToggle">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <!-- New toggle to display or hide the domain in recent views -->
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Display domain in recent views</span>
-          <div class="setting-description">Toggle display of the domain name in recent views</div>
-        </div>
-        <label class="switch">
-          <!-- The id="showDomainsToggle" will be referenced in popup.js -->
-          <input type="checkbox" id="showDomainsToggle">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <!-- Add this block inside the "Settings" section, alongside the other setting-row blocks -->
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-title">Reduce chatter width</span>
-          <div class="setting-description">Chatter takes up about 25% of screen width</div>
-        </div>
-        <label class="switch">
-          <!-- This checkbox will be referenced in popup.js -->
-          <input type="checkbox" id="keepDefaultChatterSize">
-          <span class="slider"></span>
-        </label>
-      </div>
-    </div>
-  </section>
+  <div class="section-separator"></div>
 
   <!-- Shortcuts section -->
   <section class="shortcuts">
@@ -122,26 +76,98 @@
       </div>
     </div>
   </section>
+  <div class="section-separator"></div>
 
-  <!-- GitHub section with improved styling and information -->
-  <section class="github-section">
-    <div class="github-header">
-      <h3>Open Source</h3>
-      <p class="github-description">This extension is open source! Feel free to contribute, report issues or check out the code.</p>
+  <!-- Settings section -->
+  <section class="settings-section">
+    <div class="section-header" id="settingsHeader">
+      <h3>Settings</h3>
+      <svg class="collapse-icon" viewBox="0 0 24 24">
+        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+      </svg>
     </div>
-    <div class="github-actions">
-      <a href="https://github.com/jonathanbertholet/OdooChatter" target="_blank" class="github-button">
-        <svg viewBox="0 0 24 24" class="button-icon">
-          <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" fill="currentColor"/>
-        </svg>
-        View on GitHub
-      </a>
-      <a href="https://github.com/jonathanbertholet/OdooChatter/issues/new" target="_blank" class="github-button secondary">
-        <svg viewBox="0 0 24 24" class="button-icon">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
-        </svg>
-        Report Issue
-      </a>
+    
+    <div class="settings-content">
+      <div class="settings-group">
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Hide chatter by default</span>
+            <div class="setting-description">Always fold the chatter</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="hideChatter" disabled>
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Display chatter below</span>
+            <div class="setting-description">Always display chatter below</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="displayBelow">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Permanent Debug mode</span>
+            <div class="setting-description"><b>Important :</b> Conflict with the "Odoo Debug" extension. You can uninstall it.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="debugMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Stylish Support Page</span>
+            <div class="setting-description">For Odoo Employees</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="stylishSupportToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- toggle to display or hide the domain in recent views -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Display domain in recent views</span>
+            <div class="setting-description">Toggle display of the domain name in recent views</div>
+          </div>
+          <label class="switch">
+            <!-- The id="showDomainsToggle" will be referenced in popup.js -->
+            <input type="checkbox" id="showDomainsToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- GitHub section -->
+        <div class="github-section">
+          <div class="github-header">
+            <h3>Open Source</h3>
+            <p class="github-description">Contribute, report issues or check out the code.</p>
+          </div>
+          <div class="github-actions">
+            <a href="https://github.com/jonathanbertholet/OdooChatter" target="_blank" class="github-button">
+              <svg viewBox="0 0 24 24" class="button-icon">
+                <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" fill="currentColor"/>
+              </svg>
+              View on GitHub
+            </a>
+            <a href="https://github.com/jonathanbertholet/OdooChatter/issues/new" target="_blank" class="github-button secondary">
+              <svg viewBox="0 0 24 24" class="button-icon">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
+              </svg>
+              Report Issue
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
   <script src="popup.js"></script>

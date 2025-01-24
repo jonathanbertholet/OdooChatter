@@ -1,23 +1,27 @@
 /* Base Styles */
 body {
   width: 330px;
-  padding: 12px;
+  padding: 10px;
   font-family: system-ui, -apple-system, sans-serif;
-  color: #333;
+  color: #875A7B;
   margin: 0;
 }
 
 /* Section Styles */
 section {
   margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  padding-bottom: 0;
 }
 
 section:last-child {
   margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #875A7B;
+  margin: 0 0 8px 0;
 }
 
 h3 {
@@ -72,6 +76,30 @@ h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Modify the recent-view-header to allow wrapping */
+.recent-view-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Align items to the start */
+}
+
+/* Update the recent-view-title to allow line breaks */
+.recent-view-title {
+  font-size: 12px; /* Increased font size for better readability */
+  color: #333;
+  margin-top: 4px;
+  white-space: normal; /* Allow text to wrap */
+  word-wrap: break-word; /* Break long words if necessary */
+  overflow: hidden; /* Hide any overflowing text */
+}
+
+/* Style the recent-view-timestamp to align properly */
+.recent-view-timestamp {
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
 }
 
 /* Switch Toggle Styles */
@@ -144,6 +172,7 @@ input:checked + .slider:before {
 .shortcut-label {
   font-size: 13px;
   font-weight: 500;
+  color: #666;
 }
 
 .shortcut-keys {
@@ -240,4 +269,248 @@ input:checked + .slider:before {
 .github-button .button-icon {
   width: 18px;
   height: 18px;
+}
+
+/* Pins Section Styles */
+.pins-section {
+  margin-bottom: 16px;
+  padding-bottom: 0;
+}
+
+.pins-section h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 8px 0;
+}
+
+.pins-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.pinned-button {
+  position: relative; /* To position the remove button absolutely */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-sizing: border-box;
+  overflow: hidden; /* Ensure child elements don't overflow */
+}
+
+.pinned-button:hover {
+  background: #e0e0e0;
+}
+
+.remove-pin-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 16px;
+  text-align: center;
+}
+
+.remove-pin-button:hover {
+  color: #333;
+}
+
+.pinned-app-name {
+  font-size: 10px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.pinned-page-name {
+  font-size: 12px;
+  color: #333;
+  margin-top: 4px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Add ellipsis */
+  width: 100%; /* Ensure the element takes full width */
+  padding-right: 20px; /* Space for the remove button */
+}
+
+.pin-page-button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #875A7B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.pin-page-button:hover {
+  background: #6d4862;
+}
+
+/* Search Filter Styles */
+.search-filter {
+  margin-bottom: 8px;
+}
+
+#recentViewsSearch {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+/* Button Container Styles */
+.button-container {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  flex: 1;
+  padding: 6px 12px;
+  background: #875A7B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.action-button:hover {
+  background: #6d4862;
+}
+
+.action-button .button-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Remove the old button styles */
+.pin-page-button {
+  display: none;
+}
+
+.primary-button {
+  display: none;
+}
+
+/* Remove the quick-links section since we moved the settings button */
+.quick-links {
+  display: none;
+}
+
+/* Collapsible Settings Section */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.collapse-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.settings-section.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.settings-content {
+  max-height: 1000px; /* Adjust based on your content */
+  opacity: 1;
+  overflow: hidden;
+}
+
+.settings-section.collapsed .settings-content {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Update existing settings-section styles */
+.settings-section {
+  margin-bottom: 16px;
+  padding-bottom: 0;
+}
+
+/* New Separator Style - Independent from sections */
+.section-separator {
+  height: 1px;
+  background-color: #eee;
+  margin: 16px 0;
+}
+
+/* Update specific sections that need different spacing */
+.pins-section {
+  margin-bottom: 16px;
+  padding-bottom: 0;
+  /* Remove border-bottom since we'll use separator */
+}
+
+.settings-section {
+  margin-bottom: 16px;
+  padding-bottom: 0;
+  /* Remove border-bottom since we'll use separator */
+}
+
+/* Update GitHub section styles to fit within settings */
+.github-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.github-header {
+  margin-bottom: 8px;
+}
+
+.github-description {
+  font-size: 11px;
+  color: #666;
+  margin: 4px 0 8px 0;
+}
+
+.github-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Remove the old github-section styles that were independent */
+.github-section {
+  margin-bottom: 0;
+  padding-bottom: 0;
 } 
