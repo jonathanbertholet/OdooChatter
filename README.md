@@ -25,9 +25,17 @@ A powerful Chrome extension that enhances your Odoo experience with smart chatte
 - Keyboard shortcuts for common actions
 - Streamlined navigation
 
+### 🔖 Pins
+- Pin your favorite pages to quick access
+- Persistent across sessions
+
+### 🎨 Customize Chatter Width
+- Choose between standard, medium, or large width
+- Persistent across sessions
+
 ## 🚀 Installation
 
-1. Download from Chrome Web Store (coming soon)
+1. Download from Chrome Web Store : https://chromewebstore.google.com/detail/odoo-chatter-utilities/jnlkgngeodbbhjhfifdkameknejjgkdl
    
    OR
 
