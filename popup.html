@@ -7,18 +7,6 @@
 </head>
 <body>
   <h2>Odoo Chatter Utilities</h2>
-  <!-- Quick Links section first -->
-  <section class="quick-links">
-    <div class="link-row">
-      <button id="settingsLink" class="primary-button">
-        <svg viewBox="0 0 24 24" class="button-icon">
-          <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
-        </svg>
-        Odoo Settings
-      </button>
-    </div>
-  </section>
-
   <!-- Pins section -->
   <section class="pins-section">
     <h3>Pinned Pages</h3>
@@ -144,6 +132,18 @@
             <input type="checkbox" id="showDomainsToggle">
             <span class="slider"></span>
           </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Chatter Width</span>
+            <div class="setting-description">Minimum chatter width.</div>
+          </div>
+          <div class="tri-state-toggle">
+            <div class="toggle-option" data-value="standard">Normal</div>
+            <div class="toggle-option" data-value="medium">Wide</div>
+            <div class="toggle-option" data-value="large">Large</div>
+          </div>
         </div>
 
         <!-- GitHub section -->

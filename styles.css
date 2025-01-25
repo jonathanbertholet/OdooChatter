@@ -45,15 +45,10 @@
   opacity: 0.9;
 }
 
-/* Update the SVG path for a nicer arrow */
+/* Arrow */
 .chatter-toggle svg {
   width: 16px;
   height: 16px;
-}
-
-/* Replace the existing polyline with this new path */
-.chatter-toggle svg polyline {
-  points: "13 16 7 10 13 4";
 }
 
 .chatter-toggle:hover .chatter-toggle-icon {
@@ -166,27 +161,27 @@
   50% { opacity: 0.6; }
   100% { opacity: 1; }
 }
-
-/* Fix for contacts app form view spacing */
+/* Fix for contacts app form view spacing - when not there, lots of annoying space between the form and the chatter */
 .o_form_view.o_xxl_form_view .o_form_sheet_bg {
   flex: 0 1 auto !important; /* Override the flex: 2 1 990px */
 }
 
-/* Additional fix for vertical layout in contacts */
+/* Additional fix for vertical layout in contacts - when not there, lots of annoying space between the form and the chatter */
 .vertical-layout .o_form_view.o_xxl_form_view .o_form_sheet_bg {
   min-height: auto !important;
   flex: 0 1 auto !important;
 }
 
-/* Chatter is 35% of the screen width */
-.o_content > div:not(.vertical-layout):not(.centered-form) .o-mail-ChatterContainer {
-  width: 35% !important; /* Adjust this to whatever width suits your layout */
-  max-width: none !important;
+/* Ensure the chatter container has adjustable minimum widths */
+.o-mail-ChatterContainer.standard {
+  min-width: 33.5vw !important; /* Standard Width: 33.5% of viewport */
 }
 
-/* Careful : name may be confusing : : when .keep-default-chatter-size is active, the chatter width is set to auto (narrow) */
-
-.keep-default-chatter-size .o_content > div:not(.vertical-layout):not(.centered-form) .o-mail-ChatterContainer {
-  width: auto !important;
-  max-width: none !important;
+.o-mail-ChatterContainer.medium {
+  min-width: 41.5vw !important; /* Medium Width: 41.5% of viewport */
 }
+
+.o-mail-ChatterContainer.large {
+  min-width: 50vw !important; /* Large Width: 50% of viewport */
+}
+

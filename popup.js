@@ -15,6 +15,9 @@
     pinPageButton: document.getElementById('pinPageButton'),
     pinsList: document.getElementById('pinsList'),
     recentViewsSearch: document.getElementById('recentViewsSearch'),
+    widthStandard: document.getElementById('widthStandard'),
+    widthMedium: document.getElementById('widthMedium'),
+    widthLarge: document.getElementById('widthLarge'),
   };
 
   /**
@@ -29,6 +32,9 @@
     // Local storage methods
     getLocal: (keys) => new Promise((resolve) => chrome.storage.local.get(keys, resolve)),
     setLocal: (items) => new Promise((resolve) => chrome.storage.local.set(items, resolve)),
+
+    getChatterWidth: () => new Promise((resolve) => chrome.storage.sync.get(['chatterWidth'], resolve)),
+    setChatterWidth: (width) => new Promise((resolve) => chrome.storage.sync.set({ chatterWidth: width }, resolve)),
   };
 
   /**
@@ -493,6 +499,9 @@
 
         // Render pinned pages
         await this.renderPins();
+
+        // Initialize chatter width settings
+        await this.initializeChatterWidth();
       } catch (error) {
         console.error('Error initializing popup:', error);
       }
@@ -576,6 +585,66 @@
           const url = item.dataset.url;
           TabUtil.openUrlInCurrentTab(url);
         }
+      });
+
+      // Setup chatter width listeners
+      this.setupChatterWidthListeners();
+    },
+
+    /**
+     * Renders the initial state of chatter width settings
+     */
+    async initializeChatterWidth() {
+      try {
+        const result = await StorageUtil.getChatterWidth();
+        const width = result.chatterWidth || 'standard';
+        
+        // Find the tri-state toggle container
+        const toggleContainer = document.querySelector('.tri-state-toggle');
+        if (!toggleContainer) return;
+        
+        // Set the active state
+        toggleContainer.dataset.state = width;
+        
+        // Update active class on options
+        const options = toggleContainer.querySelectorAll('.toggle-option');
+        options.forEach(option => {
+          option.classList.toggle('active', option.dataset.value === width);
+        });
+      } catch (error) {
+        console.error('Error initializing chatter width:', error);
+      }
+    },
+
+    /**
+     * Sets up event listeners for chatter width toggle
+     */
+    setupChatterWidthListeners() {
+      const toggleContainer = document.querySelector('.tri-state-toggle');
+      if (!toggleContainer) return;
+
+      const handleWidthChange = async (selectedWidth) => {
+        try {
+          await StorageUtil.setChatterWidth(selectedWidth);
+          // Update the toggle state
+          toggleContainer.dataset.state = selectedWidth;
+          
+          // Update active classes
+          const options = toggleContainer.querySelectorAll('.toggle-option');
+          options.forEach(option => {
+            option.classList.toggle('active', option.dataset.value === selectedWidth);
+          });
+        } catch (error) {
+          console.error('Error setting chatter width:', error);
+        }
+      };
+
+      // Add click listeners to each option
+      const options = toggleContainer.querySelectorAll('.toggle-option');
+      options.forEach(option => {
+        option.addEventListener('click', () => {
+          handleWidthChange(option.dataset.value);
+        });
       });
     },
   };

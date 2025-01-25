@@ -5,7 +5,7 @@ const CONFIG = {
   DEBOUNCE_INTERVAL: 250,   // Delay for debouncing
   THROTTLE_INTERVAL: 150,   // Delay for throttling
   SUPPORT_NAVBAR_SCROLL_THRESHOLD: 20,  // Scroll threshold for support navbar
-  RECENT_VIEWS_LIMIT: 35,   // Maximum number of recent views stored
+  RECENT_VIEWS_LIMIT: 50,   // Maximum number of recent views stored
   DEBUG_MODE_CHECK_INTERVAL: 10000, // Interval to check path changes for debug mode mismatch
 };
 
@@ -520,6 +520,49 @@ function initKeyboardShortcut() {
 initKeyboardShortcut(); // Initialize keyboard shortcuts
 
 // ----------------------------------
+// 13) Feature: Dynamic Chatter Width Management
+// ----------------------------------
+/**
+ * Applies the selected chatter width by adding the corresponding CSS class.
+ * @param {string} width - The selected width ('standard', 'medium', 'large').
+ */
+function applyChatterWidth(width) {
+  const chatterContainer = document.querySelector('.o-mail-ChatterContainer, .o_mail_chattercontainer');
+  if (!chatterContainer) return;
+
+  // Remove existing width classes
+  chatterContainer.classList.remove('standard', 'medium', 'large');
+
+  // Add the selected width class
+  if (['standard', 'medium', 'large'].includes(width)) {
+    chatterContainer.classList.add(width);
+  } else {
+    // Fallback to standard if an unknown value is encountered
+    chatterContainer.classList.add('standard');
+  }
+}
+
+/**
+ * Initializes chatter width based on stored settings.
+ */
+function initChatterWidth() {
+  chrome.storage.sync.get(['chatterWidth'], function(result) {
+    const width = result.chatterWidth || 'standard';
+    applyChatterWidth(width);
+  });
+}
+
+// Listen for changes in chatterWidth to dynamically apply them
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && changes.chatterWidth) {
+    applyChatterWidth(changes.chatterWidth.newValue);
+  }
+});
+
+// Initialize chatter width on script load
+initChatterWidth();
+
+// ----------------------------------
 // 9) Single Mutation Observer
 // ----------------------------------
 /**
@@ -563,6 +606,12 @@ const chatterObserver = new MutationObserver(throttle((mutations) => {
   if (chatterChanged) {
     trackRecentView();
     debouncedInit();
+
+    // Apply chatter width when chatter container changes
+    chrome.storage.sync.get(['chatterWidth'], function(result) {
+      const width = result.chatterWidth || 'standard';
+      applyChatterWidth(width);
+    });
   }
 }, CONFIG.THROTTLE_INTERVAL));
 
@@ -589,27 +638,6 @@ window.addEventListener('unload', disconnectObservers);
 const debouncedInit = debounce(initChatterManager, CONFIG.DEBOUNCE_INTERVAL);
 initChatterManager(); // Initial check when the script is first loaded
 
-// ----------------------------------
-// 12) Additional: Keep Default Chatter Size
-// ----------------------------------
-/**
- * Toggles a class on the HTML element to restore default Chatter size if requested.
- * @param {boolean} keepDefaultChatterSize 
- */
-// function applyChatterSizePreference(keepDefaultChatterSize) {
-//   // We apply the class to the <html> so it cascades over all .o-mail-ChatterContainer
-//   if (keepDefaultChatterSize) {
-//     document.documentElement.classList.add('keep-default-chatter-size');
-//   } else {
-//     document.documentElement.classList.remove('keep-default-chatter-size');
-//   }
-// }
-
-// // Retrieve and apply keepDefaultChatterSize on load
-// chrome.storage.sync.get(['keepDefaultChatterSize'], function(result) {
-//   applyChatterSizePreference(result.keepDefaultChatterSize ?? false);
-// });
-
 // Listen for changes and re-apply as needed
 chrome.storage.onChanged.addListener((changes) => {
   // Stylish support toggling
@@ -622,7 +650,7 @@ chrome.storage.onChanged.addListener((changes) => {
   }
   // Chatter size preference toggling
   if (changes.keepDefaultChatterSize) {
-    // applyChatterSizePreference(changes.keepDefaultChatterSize.newValue);
+    applyChatterSizePreference(changes.keepDefaultChatterSize.newValue);
   }
 });
 
