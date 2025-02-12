@@ -568,4 +568,11 @@ input:checked + .slider:before {
 /* Remove old chatter width options */
 .chatter-width-options {
   display: none;
+}
+
+.pinned-domain {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 } 
